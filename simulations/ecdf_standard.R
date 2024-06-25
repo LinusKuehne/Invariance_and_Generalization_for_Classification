@@ -103,7 +103,7 @@ for(b in 1:nreps){
   
 }
 
-save(df.S1, df.S13, "results/ecdf_standard.rdata")
+save(df.S1, df.S13, file = file.path(script_dir, "results/ecdf_standard.rdata"))
 #file = file.path(script_dir, "results/ecdf_standard.rdata")
 
 
