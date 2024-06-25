@@ -9,7 +9,7 @@ library(patchwork)
 
 
 # get the path of this script
-script_dir <- dirname(rstudioapi::getActiveDocumentContext()$path)
+script_dir <- getwd()
 
 # load in the functions needed
 source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
