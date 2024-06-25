@@ -160,7 +160,7 @@ combined <- p13 + p1 & theme(legend.position = "bottom", legend.title=element_bl
 
 combined + plot_layout(guides = "collect")
 
-ggsave(filename = file.path(script_dir, "/results/ecdf_standard.pdf"), width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "results/ecdf_standard.pdf"), width = 6, height = 4)
   
 
 
@@ -169,7 +169,7 @@ ggsave(filename = file.path(script_dir, "/results/ecdf_standard.pdf"), width = 6
 
 
 
-writeLines(capture.output(sessionInfo()), file.path(script_dir, "/sessionInfo/ecdf_standard.txt"))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ecdf_standard.txt"))
 
 
 
