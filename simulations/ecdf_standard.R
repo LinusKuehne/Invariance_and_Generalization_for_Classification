@@ -31,7 +31,7 @@ sets <- list(c(1,2,3), c(1,3), c(1,2), c(2,3), c(1), c(2), c(3))
 
 # number of simulation repetitions
 # 500 nreps should take around one hour on my MB
-nreps <- 5
+nreps <- 500
 
 
 # n observations per environment => 5*n observations in total
@@ -103,7 +103,7 @@ for(b in 1:nreps){
   
 }
 
-save(df.S1, df.S13, file = file.path(script_dir, "results/ecdf_standard.rdata"))
+save(df.S1, df.S13, file = file.path(script_dir, "saved_data/ecdf_standard.rdata"))
 
 
 #-------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ combined <- p13 + p1 & theme(legend.position = "bottom", legend.title=element_bl
 
 combined + plot_layout(guides = "collect")
 
-ggsave(filename = file.path(script_dir, "results/ecdf_standard.pdf"), width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/ecdf_standard.pdf"), width = 6, height = 4)
   
 
 #-------------------------------------------------------------------------------
