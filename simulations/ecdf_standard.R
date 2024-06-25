@@ -104,7 +104,6 @@ for(b in 1:nreps){
 }
 
 save(df.S1, df.S13, file = file.path(script_dir, "results/ecdf_standard.rdata"))
-#file = file.path(script_dir, "results/ecdf_standard.rdata")
 
 
 #-------------------------------------------------------------------------------
@@ -162,18 +161,16 @@ combined <- p13 + p1 & theme(legend.position = "bottom", legend.title=element_bl
 
 combined + plot_layout(guides = "collect")
 
-ggsave(filename = "results/ecdf_standard.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "results/ecdf_standard.pdf"), width = 6, height = 4)
   
-#file.path(script_dir, "results/ecdf_standard.pdf")
 
 #-------------------------------------------------------------------------------
 
 
 
 
-writeLines(capture.output(sessionInfo()), "sessionInfo/ecdf_standard.txt")
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ecdf_standard.txt"))
 
-#file.path(script_dir, "sessionInfo/ecdf_standard.txt")
 
 
 
