@@ -9,9 +9,13 @@ library(patchwork)
 
 
 
-source("utils.R")
-source("DGP.R")
-source("invariance_tests.R")
+# get the path of this script
+script_dir <- getwd()
+
+# load in the functions needed
+source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
+source(file.path(script_dir, "../code/code_simulations/data_generating_process.R"))
+source(file.path(script_dir, "../code/code_simulations/utils.R"))
 
 
 
@@ -507,7 +511,7 @@ p.mod4 <- ggplot(points.mod4, aes(x = x, y = y, group = group)) +
 
 
 
-save(points.mod1, points.mod2, points.mod3, points.mod4, file = "level_power_standard.rdata")
+save(points.mod1, points.mod2, points.mod3, points.mod4, file = file.path(script_dir, "saved_data/level_power_standard.rdata"))
 
 
 
@@ -529,8 +533,10 @@ combined_plot <- combined + plot_layout(guides = "collect") &
 combined_plot
 
 
-ggsave(filename = "level_power_standard.pdf", width = 7, height = 7.5)
+ggsave(filename = file.path(script_dir, "saved_plots/level_power_standard.pdf"), width = 7, height = 7.5)
 
 
 
+# store the sessionInfo:
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/level_power_standard.txt"))
 

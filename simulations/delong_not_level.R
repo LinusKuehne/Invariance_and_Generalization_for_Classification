@@ -19,7 +19,8 @@
 
 
 
-
+# get the path of this script
+script_dir <- getwd()
 
 
 library(ranger)
@@ -232,7 +233,7 @@ n <- 200
 
 # repeat experiment nreps times
 # 1000 nreps should take around one hour on my MB
-nreps <- 1000
+nreps <- 500
 
 
 # samp.sizes are the iteratively larger number of observations from the total sample used
@@ -254,7 +255,7 @@ df.exclude1 <- sim.run(set = sets[[5]], n=n, nreps = nreps, samp.sizes = samp.si
 df.permute1 <- sim.run(set = sets[[5]], n=n, nreps = nreps, samp.sizes = samp.sizes, pval.function = pval.permute)
 
 
-save(df.exclude13, df.permute13, df.exclude1, df.permute1, file = "delong_not_level.rdata")
+save(df.exclude13, df.permute13, df.exclude1, df.permute1, file = file.path(script_dir, "saved_data/delong_not_level.rdata"))
 #-------------------------------------------------------------------------------
 
 
@@ -331,9 +332,20 @@ combined <- p1 + p13 & theme(legend.position = "bottom", legend.title=element_bl
 combined + plot_layout(guides = "collect")
 
 
-ggsave(filename = "delong_not_level.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/delong_not_level.pdf"), width = 6, height = 4)
 
 
 
 
- #-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/delong_not_level.txt"))
+
+
+
+
+
+
+
+

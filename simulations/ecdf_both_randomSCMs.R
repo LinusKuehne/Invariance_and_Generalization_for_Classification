@@ -11,9 +11,14 @@ library(ggplot2)
 library(patchwork)
 library(rje)
 
-source("invariance_tests.R")
-source("DGP.R")
-source("utils.R")
+
+# get the path of this script
+script_dir <- getwd()
+
+# load in the functions needed
+source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
+source(file.path(script_dir, "../code/code_simulations/data_generating_process.R"))
+source(file.path(script_dir, "../code/code_simulations/utils.R"))
 
 
 
@@ -175,9 +180,10 @@ save(null.pvals.delong.rf.randDAG,
      null.pvals.tram.glm.semirand,
      null.pvals.corr.semirand,
      null.pvals.residual.semirand,
-     file = "ecdf_both_randomSCMs.rdata")
+     file = file.path(script_dir, "saved_data/ecdf_both_randomSCMs.rdata"))
 
 #-------------------------------------------------------------------------------
+
 
 
 
@@ -231,7 +237,7 @@ combined <- p.semirand + p.randDAG & theme(legend.position = "bottom", legend.ti
 
 combined + plot_layout(guides = "collect")
 
-ggsave(filename = "ecdf_both_randomSCMs.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/ecdf_both_randomSCMs.pdf"), width = 6, height = 4)
 
 
 
@@ -239,6 +245,7 @@ ggsave(filename = "ecdf_both_randomSCMs.pdf", width = 6, height = 4)
 #-------------------------------------------------------------------------------
 
 
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ecdf_both_randomSCMs.txt"))
 
 
 

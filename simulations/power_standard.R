@@ -14,9 +14,13 @@ library(patchwork)
 library(pROC)
 
 
-source("DGP.R")
-source("invariance_tests.R")
-source("utils.R")
+# get the path of this script
+script_dir <- getwd()
+
+# load in the functions needed
+source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
+source(file.path(script_dir, "../code/code_simulations/data_generating_process.R"))
+source(file.path(script_dir, "../code/code_simulations/utils.R"))
 
 
 
@@ -123,7 +127,7 @@ for(b in 1:nreps){
 
 
 
-save(list.jaccard.int, file = "power_standard_int.rdata")
+save(list.jaccard.int, file = file.path(script_dir, "saved_data/power_standard_int.rdata"))
 
 
 #-------------------------------------------------------------------------------
@@ -292,7 +296,7 @@ for(b in 1:nreps){
 
 
 
-save(list.jaccard.samp,  file = "power_standard_samp.rdata")
+save(list.jaccard.samp,  file = file.path(script_dir, "saved_data/power_standard_samp.rdata"))
 
 #-------------------------------------------------------------------------------
 
@@ -391,13 +395,15 @@ combined <- p.jaccard.int + p.jaccard.samp & theme(legend.position = "bottom", l
 
 combined + plot_layout(guides = "collect")
 
-ggsave(filename = "power_standard.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/power_standard.pdf"), width = 6, height = 4)
 
 #-------------------------------------------------------------------------------
 
 
 
 
+# store the sessionInfo:
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/power_standard.txt"))
 
 
 

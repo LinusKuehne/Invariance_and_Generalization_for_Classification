@@ -11,9 +11,15 @@ library(reshape2)
 
 
 
-source("DGP.R")
-source("invariance_tests.R")
-source("utils.R")
+# get the path of this script
+script_dir <- getwd()
+
+# load in the functions needed
+source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
+source(file.path(script_dir, "../code/code_simulations/data_generating_process.R"))
+source(file.path(script_dir, "../code/code_simulations/utils.R"))
+
+
 
 
 
@@ -142,7 +148,7 @@ for(b in 1:nreps){
 }
 
 
-save(list.FWE.int, list.jaccard.int, file = "ICP_level_power_semirandom_int.rdata")
+save(list.FWE.int, list.jaccard.int, file = file.path(script_dir, "saved_data/ICP_level_power_semirandom_int.rdata"))
 
 
 #-------------------------------------------------------------------------------
@@ -255,10 +261,9 @@ combined.int <- p.FWER.int + p.jaccard.int & theme(legend.position = "bottom", l
 combined.int + plot_layout(guides = "collect")
 
 
-ggsave(filename = "ICP_level_power_semirandom_int.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/ICP_level_power_semirandom_int.pdf"), width = 6, height = 4)
 
 #-------------------------------------------------------------------------------
-
 
 
 
@@ -367,7 +372,7 @@ for(b in 1:nreps){
 }
 
 
-save(list.FWE.samp, list.jaccard.samp, file = "ICP_level_power_semirandom_samp.rdata")
+save(list.FWE.samp, list.jaccard.samp, file = file.path(script_dir, "saved_data/ICP_level_power_semirandom_samp.rdata"))
 
 
 #-------------------------------------------------------------------------------
@@ -478,11 +483,13 @@ combined.samp <- p.FWER.samp + p.jaccard.samp & theme(legend.position = "bottom"
 
 combined.samp + plot_layout(guides = "collect")
 
-ggsave(filename = "ICP_level_power_semirandom_samp.pdf", width = 6, height = 4)
+ggsave(filename = file.path(script_dir, "saved_plots/ICP_level_power_semirandom_samp.pdf"), width = 6, height = 4)
 
 #-------------------------------------------------------------------------------
 
 
+# store the sessionInfo:
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ICP_level_power_semirandom.txt"))
 
 
 

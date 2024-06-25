@@ -9,9 +9,14 @@ library(rje)
 library(patchwork)
 
 
-source("utils.R")
-source("DGP.R")
-source("invariance_tests.R")
+# get the path of this script
+script_dir <- getwd()
+
+# load in the functions needed
+source(file.path(script_dir, "../code/code_simulations/invariance_tests.R"))
+source(file.path(script_dir, "../code/code_simulations/data_generating_process.R"))
+source(file.path(script_dir, "../code/code_simulations/utils.R"))
+
 
 
 
@@ -469,7 +474,18 @@ p.oracle <- ggplot(points.mod1.oracle, aes(x = x, y = y, color = group)) +
 
 #-------------------------------------------------------------------------------
 
-save(points.mod1.delongRF, points.mod1.delongGLM, points.mod1.tramRF, points.mod1.tramGLM, points.mod1.corr, points.mod1.res, points.mod1.oracle, file = "ICP_level_power_bytarget.rdata")
+save(points.mod1.delongRF, 
+     points.mod1.delongGLM, 
+     points.mod1.tramRF, 
+     points.mod1.tramGLM, 
+     points.mod1.corr, 
+     points.mod1.res, 
+     points.mod1.oracle, 
+     file = file.path(script_dir, "saved_data/ICP_level_power_bytarget.rdata"))
+
+
+
+
 
 
 # Combine the plots with a common legend
@@ -491,10 +507,12 @@ combined_plot <- combined + plot_layout(guides = "collect") &
 combined_plot
 
 
-ggsave(filename = "ICP_level_power_bytarget.pdf", width = 7, height = 7.5)
+ggsave(filename = file.path(script_dir, "saved_plots/ICP_level_power_bytarget.pdf"), width = 7, height = 7.5)
 
 
 
+# store the sessionInfo:
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ICP_level_power_bytarget.txt"))
 
 
 
