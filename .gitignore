@@ -1,0 +1,5 @@
+# Ignore R history files
+.Rhistory
+
+# Ignore generated R plots
+Rplots.pdf
