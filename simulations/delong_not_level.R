@@ -232,7 +232,7 @@ n <- 200
 
 # repeat experiment nreps times
 # 1000 nreps should take around one hour on my MB
-nreps <- 10
+nreps <- 1000
 
 
 # samp.sizes are the iteratively larger number of observations from the total sample used
@@ -297,7 +297,7 @@ p13 <- ggplot(df.all13, aes(sample.size)) +
   geom_line(aes(y = rej.permute, colour = "permute environment", linetype = "permute environment")) +
   geom_line(aes(y = level, colour = "desired level (0.05)", linetype = "desired level (0.05)")) +
   coord_cartesian(ylim=c(0,1)) +
-  scale_color_manual(values = c("desired level (0.05)" = "gray40", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
+  scale_color_manual(values = c("desired level (0.05)" = "black", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
   scale_linetype_manual(values = c("desired level (0.05)" = "dotted", "exclude environment" = "solid", "permute environment" = "solid")) +
   labs(color = 'DeLong (RF)', linetype = 'DeLong (RF)') +
   xlab("Sample size") +
@@ -314,7 +314,7 @@ p1 <- ggplot(df.all1, aes(sample.size)) +
   geom_line(aes(y = rej.permute, colour = "permute environment", linetype = "permute environment")) +
   geom_line(aes(y = level, colour = "desired level (0.05)", linetype = "desired level (0.05)")) +
   coord_cartesian(ylim=c(0,1)) +
-  scale_color_manual(values = c("desired level (0.05)" = "gray40", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
+  scale_color_manual(values = c("desired level (0.05)" = "black", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
   scale_linetype_manual(values = c("desired level (0.05)" = "dotted", "exclude environment" = "solid", "permute environment" = "solid")) +
   labs(color = 'DeLong (RF)', linetype = 'DeLong (RF)') +
   xlab("Sample size") +
