@@ -232,7 +232,7 @@ n <- 200
 
 # repeat experiment nreps times
 # 1000 nreps should take around one hour on my MB
-nreps <- 1000
+nreps <- 10
 
 
 # samp.sizes are the iteratively larger number of observations from the total sample used
