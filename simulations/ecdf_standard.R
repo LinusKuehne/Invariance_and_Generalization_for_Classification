@@ -31,7 +31,7 @@ sets <- list(c(1,2,3), c(1,3), c(1,2), c(2,3), c(1), c(2), c(3))
 
 # number of simulation repetitions
 # 500 nreps should take around one hour on my MB
-nreps <- 3
+nreps <- 5
 
 
 # n observations per environment => 5*n observations in total
