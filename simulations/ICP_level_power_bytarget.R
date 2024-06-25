@@ -35,7 +35,7 @@ sets <- powerSet(1:(d-1))
 sets[[1]] <- 0
 
 # number of simulation repetitions (nreps = 300 would take roughly 7h for both experiments combined)
-nreps <- 20
+nreps <- 300
 
 # number of observations per environment => 5*n total observations
 n <- 150
