@@ -1,0 +1,55 @@
+R version 4.4.1 (2024-06-14)
+Platform: x86_64-pc-linux-gnu
+Running under: Fedora Linux 38 (Thirty Eight)
+
+Matrix products: default
+BLAS:   /r/app/R/R-4.4.1-isg/lib64/R/lib/libRblas.so 
+LAPACK: /usr/lib64/liblapack.so.3.11.0
+
+locale:
+ [1] LC_CTYPE=de_CH.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=C              
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=de_CH.UTF-8   
+ [7] LC_PAPER=de_CH.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=de_CH.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Europe/Zurich
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] igraph_2.0.3        gtools_3.9.5        dagitty_0.3-4      
+ [4] RBGL_1.80.0         graph_1.82.0        BiocGenerics_0.50.0
+ [7] pcalg_2.7-11        ranger_0.16.0       tramicp_0.0-2      
+[10] pROC_1.18.5         patchwork_1.2.0     rje_1.12.1         
+[13] ggplot2_3.5.1      
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.5         coin_1.4-3           ggm_2.5.1           
+ [4] lattice_0.22-6       numDeriv_2016.8-1.1  tools_4.4.1         
+ [7] quadprog_1.5-8       vctrs_0.6.5          variables_1.1-1     
+[10] generics_0.1.3       parallel_4.4.1       curl_5.2.1          
+[13] stats4_4.4.1         sandwich_3.1-0       tibble_3.2.1        
+[16] fansi_1.0.6          cluster_2.1.6        DEoptimR_1.1-3      
+[19] coneproj_1.19        pkgconfig_2.0.3      Matrix_1.7-0        
+[22] alabama_2023.1.0     lifecycle_1.0.4      farver_2.1.2        
+[25] compiler_4.4.1       textshaping_0.4.0    munsell_0.5.1       
+[28] codetools_0.2-20     clue_0.3-65          Formula_1.2-5       
+[31] pillar_1.9.0         nloptr_2.0.3         MASS_7.3-60.2       
+[34] mlt_1.5-1            boot_1.3-30          abind_1.4-5         
+[37] multcomp_1.4-25      robustbase_0.99-2    tidyselect_1.2.1    
+[40] bdsmatrix_1.3-7      mvtnorm_1.2-5        dplyr_1.1.4         
+[43] basefun_1.1-4        labeling_0.4.3       splines_4.4.1       
+[46] grid_4.4.1           colorspace_2.1-0     cli_3.6.2           
+[49] magrittr_2.0.3       survival_3.7-0       utf8_1.2.4          
+[52] orthopolynom_1.0-6.1 tram_1.0-4           TH.data_1.1-2       
+[55] libcoin_1.0-10       corpcor_1.6.10       withr_3.0.0         
+[58] scales_1.3.0         matrixStats_1.3.0    BB_2019.10-1        
+[61] ragg_1.3.2           modeltools_0.2-23    zoo_1.8-12          
+[64] V8_4.4.2             fastICA_1.2-4        rlang_1.1.4         
+[67] Rcpp_1.0.12          glue_1.7.0           polynom_1.4-1       
+[70] BiocManager_1.30.23  jsonlite_1.8.8       R6_2.5.1            
+[73] plyr_1.8.9           systemfonts_1.1.0    sfsmisc_1.1-18      

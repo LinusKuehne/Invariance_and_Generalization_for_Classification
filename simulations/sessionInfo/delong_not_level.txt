@@ -1,0 +1,34 @@
+R version 4.4.1 (2024-06-14)
+Platform: x86_64-pc-linux-gnu
+Running under: Fedora Linux 38 (Thirty Eight)
+
+Matrix products: default
+BLAS:   /r/app/R/R-4.4.1-isg/lib64/R/lib/libRblas.so 
+LAPACK: /usr/lib64/liblapack.so.3.11.0
+
+locale:
+ [1] LC_CTYPE=de_CH.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=C              
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=de_CH.UTF-8   
+ [7] LC_PAPER=de_CH.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=de_CH.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: Europe/Zurich
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] patchwork_1.2.0 ggplot2_3.5.1   pROC_1.18.5     ranger_0.16.0  
+
+loaded via a namespace (and not attached):
+ [1] vctrs_0.6.5       cli_3.6.2         rlang_1.1.4       generics_0.1.3   
+ [5] textshaping_0.4.0 labeling_0.4.3    glue_1.7.0        colorspace_2.1-0 
+ [9] plyr_1.8.9        ragg_1.3.2        scales_1.3.0      fansi_1.0.6      
+[13] grid_4.4.1        munsell_0.5.1     tibble_3.2.1      lifecycle_1.0.4  
+[17] compiler_4.4.1    dplyr_1.1.4       Rcpp_1.0.12       pkgconfig_2.0.3  
+[21] systemfonts_1.1.0 farver_2.1.2      lattice_0.22-6    R6_2.5.1         
+[25] tidyselect_1.2.1  utf8_1.2.4        pillar_1.9.0      magrittr_2.0.3   
+[29] Matrix_1.7-0      tools_4.4.1       withr_3.0.0       gtable_0.3.5     
