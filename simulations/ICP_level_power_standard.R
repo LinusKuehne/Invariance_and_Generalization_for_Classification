@@ -29,8 +29,8 @@ source(file.path(script_dir, "../code/code_simulations/utils.R"))
 sets <- list(c(1,2,3), c(1,3), c(1,2), c(2,3), c(1), c(2), c(3), c(0))
 
 
-# number of simulation repetitions (nreps = 500 would take roughly 13 h for both experiments combined)
-nreps <- 500
+# number of simulation repetitions (nreps = 1000 would take roughly 1 d for both experiments combined)
+nreps <- 1000
 
 # we will use these invariance tests
 icp.methods <- c("delong.rf", "delong.glm", "tram.rf", "tram.glm", "correlation", "residual")
@@ -172,8 +172,8 @@ sd.plot.FWER.int <- melt(df.FWER.sd.int, id.vars = "intervention.strength", vari
 
 
 # compute t-test confidence intervals
-df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
-df.plot.FWER.int$ci <- sd.plot.FWER.int$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
+df.plot.FWER.int$ci <- sd.plot.FWER.int$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 
 
@@ -370,8 +370,8 @@ sd.plot.FWER.samp <- melt(df.FWER.sd.samp,  id.vars = "sample.size", variable.na
 
 
 # compute t-test confidence intervals
-df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
-df.plot.FWER.samp$ci <- sd.plot.FWER.samp$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
+df.plot.FWER.samp$ci <- sd.plot.FWER.samp$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 df.plot.jaccard.samp$sample.size <- 5*df.plot.jaccard.samp$sample.size
 df.plot.FWER.samp$sample.size <- 5*df.plot.FWER.samp$sample.size
