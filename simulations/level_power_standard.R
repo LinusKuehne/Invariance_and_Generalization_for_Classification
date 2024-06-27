@@ -285,7 +285,7 @@ p.mod2 <- ggplot(points.mod2, aes(x = x, y = y, group = group)) +
 
 
 #-------------------------------------------------------------------------------
-# model 3 ("gam logistic regression")
+# model 3 ("non-linear logistic regression")
 #-------------------------------------------------------------------------------
 
 set.seed(1)
@@ -310,7 +310,7 @@ for(b in 1:nreps){
   print(paste0("Simulation iteration ", b, " out of ", nreps))
   
   # generate a sample from the standard SCM
-  sample <- gen.sample.standard(n = n, t = t, mod = "gam")
+  sample <- gen.sample.standard(n = n, t = t, mod = "nonlin")
   
   # compute p-values for all tests and subsets
   pvals.all <- pvalues.all(sample)
@@ -377,7 +377,7 @@ p.mod3 <- ggplot(points.mod3, aes(x = x, y = y, group = group)) +
     color = "Invariance test",
     x = "Average rejection rate of invariant S",    
     y = "Average Jaccard index",   
-    title = "GAM Logistic Regression Model"  
+    title = "Non-Linear Logistic Regression Model"  
   ) +
   coord_cartesian(ylim = c(0, 1)) 
 

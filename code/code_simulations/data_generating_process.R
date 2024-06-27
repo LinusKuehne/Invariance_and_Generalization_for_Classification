@@ -62,7 +62,7 @@ sim.SCM <- function(n, c, env){
 # n: sample size
 # c: specific value of E / intervention
 # env: name of the environment (string)
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 sim.SCM.mod <- function(n, c, env, mod = "logreg"){
 
   # parameters in SCM
@@ -92,8 +92,8 @@ sim.SCM.mod <- function(n, c, env, mod = "logreg"){
     Y <- ifelse(Ny < beta*X1, 1, 0)
   }
   
-  # GAM logistic regression model for Y
-  if(mod == "gam"){
+  # non-linear logistic regression model for Y
+  if(mod == "nonlin"){
     Ny <- rlogis(n)
     
     inpt <- beta*X1
@@ -132,7 +132,7 @@ sim.SCM.mod <- function(n, c, env, mod = "logreg"){
 # returns a sample from 5 environments from the standard SCM with different possible structural equations for Y
 # n: number of observations per environment => total 5*n data points in sample
 # t: scales the intervention strength (0 < t < 1)
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 gen.sample.standard <- function(n, t=1, mod = "logreg"){
   
   sample.0 <- sim.SCM.mod(n = n, c = t*0, env = "noInt", mod = mod)
@@ -214,7 +214,7 @@ gen.sample.fixed <- function(n, n.test, int.strength.train = 1, int.strength.tes
 # t: scales the intervention values (0 < t < 1) 
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 generate.samples.random <- function(n, n.test, d, max.pa, num.int, t = 1, int.strength.train = 2, int.strength.test = 10, mod = "logreg"){
   
   # decide which node is response
@@ -285,7 +285,7 @@ generate.samples.random <- function(n, n.test, d, max.pa, num.int, t = 1, int.st
 # t: scales the intervention values (0 < t < 1) 
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 dag2sample <- function(d, n, n.test, num.int, dag.full, dag.cov, var.names, t, int.strength.train = 2, int.strength.test = 10, mod){
   
   # extract topological order
@@ -402,7 +402,7 @@ dag2sample <- function(d, n, n.test, num.int, dag.full, dag.cov, var.names, t, i
 # usage: whether this sample is intended for testing (stronger interventions) or training (weaker interventions)
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 generate.one.env <- function(env.name, d, n, num.int, dag.full, dag.cov, top.order, weights.SCM, var.names, t, usage, int.strength.train = 2, int.strength.test = 10, mod){
   
 
@@ -490,7 +490,7 @@ generate.one.env <- function(env.name, d, n, num.int, dag.full, dag.cov, top.ord
           df.env$Y <- ifelse(Ny < comb, 1, 0)
         }
         
-        if(mod == "gam"){
+        if(mod == "nonlin"){
           fx <- (1/20)*(0.75*comb^3 - 5*comb) + 2*sin(3*comb) 
           df.env$Y <- ifelse(Ny < 2*fx + 1, 1, 0)
         }
@@ -594,7 +594,7 @@ generate.one.env <- function(env.name, d, n, num.int, dag.full, dag.cov, top.ord
             df.env$Y <- ifelse(Ny < comb, 1, 0)
           }
           
-          if(mod == "gam"){
+          if(mod == "nonlin"){
             fx <- (1/20)*(0.75*comb^3 - 5*comb) + 2*sin(3*comb) 
             df.env$Y <- ifelse(Ny < 3*fx + 1, 1, 0)
           }
@@ -804,7 +804,7 @@ generate.parents <- function(d, max.pa){
 # t: scales the intervention values (0 < t < 1) 
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 generate.samples.semirandom <- function(n, n.test, t = 1, int.strength.train = 2, int.strength.test = 8, mod = "logreg"){
   
   # decide which node is response
@@ -893,7 +893,7 @@ generate.weights.semirandom <- function(dag.full, top.order){
 # t: scales the intervention values (0 < t < 1) 
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 dag2sample.semirandom <- function(d, n, n.test, num.int, dag.full, dag.cov, var.names, t = 1, int.strength.train = 2, int.strength.test = 8, mod){
   
   # topological order
@@ -1003,7 +1003,7 @@ dag2sample.semirandom <- function(d, n, n.test, num.int, dag.full, dag.cov, var.
 # usage: whether this sample is intended for testing (stronger interventions) or training (weaker interventions)
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), GAM logistic regression ("gam"), bump model ("bump")
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
 generate.one.env.semirandom <- function(env.name, d, n, num.int, dag.full, dag.cov, top.order, weights.SCM, var.names, t, usage, int.strength.train = 8, int.strength.test = 2, mod){
 
   
@@ -1079,7 +1079,7 @@ generate.one.env.semirandom <- function(env.name, d, n, num.int, dag.full, dag.c
           df.env$Y <- ifelse(Ny < comb, 1, 0)
         }
         
-        if(mod == "gam"){
+        if(mod == "nonlin"){
           fx <- (1/20)*(0.75*comb^3 - 5*comb) + 2*sin(3*comb) 
           df.env$Y <- ifelse(Ny < 3*fx + 1, 1, 0)
         }
@@ -1171,7 +1171,7 @@ generate.one.env.semirandom <- function(env.name, d, n, num.int, dag.full, dag.c
             df.env$Y <- ifelse(Ny < comb, 1, 0)
           }
           
-          if(mod == "gam"){
+          if(mod == "nonlin"){
             fx <- (1/20)*(0.75*comb^3 - 5*comb) + 2*sin(3*comb) 
             df.env$Y <- ifelse(Ny < 3*fx + 1, 1, 0)
           }

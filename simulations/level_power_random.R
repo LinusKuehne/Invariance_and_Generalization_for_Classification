@@ -336,7 +336,7 @@ p.mod2 <- ggplot(points.mod2, aes(x = x, y = y, color = group)) +
 
 
 #-------------------------------------------------------------------------------
-# model 3 ("gam logistic regression")
+# model 3 ("non-linear logistic regression")
 #-------------------------------------------------------------------------------
 
 set.seed(1)
@@ -365,7 +365,7 @@ for(b in 1:nreps){
   print(paste0("Simulation iteration ", b, " out of ", nreps))
   
   # generate data from the semirandom SCM
-  s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, t = t, mod = "gam")
+  s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, t = t, mod = "nonlin")
   
   # compute p-values for all tests and subsets
   pvals.all <- pvalues.all(s$sample_train)
@@ -442,7 +442,7 @@ p.mod3 <- ggplot(points.mod3, aes(x = x, y = y, color = group)) +
     color = "Group",
     x = "Average rejection rate across\ninvariant subsets",
     y = "Average Jaccard index",
-    title = "GAM Logistic Regression Model"
+    title = "Non-Linear Logistic Regression Model"
   ) +
   theme(
     legend.position = "bottom",
