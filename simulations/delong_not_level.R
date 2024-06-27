@@ -209,8 +209,11 @@ sim.run <- function(set, n, nreps, samp.sizes, pval.function){
   # calculate the rejection rate over the simulation iterations
   rejection.rate <- colMeans(reject.mat)
   
+  # calculate standard deviation
+  sd.rejection.rate <- apply(X = reject.mat, MARGIN = 2, FUN = sd)
   
-  df.output <- data.frame(sample.size = samp.sizes, rejection.rate = rejection.rate)
+  
+  df.output <- data.frame(sample.size = samp.sizes, rejection.rate = rejection.rate, sd.rej.rate = sd.rejection.rate)
   return(df.output)
 }
 
@@ -273,18 +276,27 @@ save(df.exclude13, df.permute13, df.exclude1, df.permute1, file = file.path(scri
 
 
 # prepare data sets for plotting
-
-df.all13 <- df.exclude13
+df.all13 <- df.exclude13[, c("sample.size", "rejection.rate")]
 df.all13$rej.rate.permute <- df.permute13$rejection.rate
 names(df.all13) <- c("sample.size", "rej.exclude", "rej.permute")
 df.all13$level <- rep(0.05, nrow(df.all13))
 
-df.all1 <- df.exclude1
+# compute 95% t-test confidence interval
+df.all13$ci.perm <- qt(p = 0.975, df = nreps-1)*df.permute13$sd.rej.rate / sqrt(nreps)
+df.all13$ci.excl <- qt(p = 0.975, df = nreps-1)*df.exclude13$sd.rej.rate / sqrt(nreps)
+
+
+
+
+
+df.all1 <- df.exclude1[, c("sample.size", "rejection.rate")]
 df.all1$rej.rate.permute <- df.permute1$rejection.rate
 names(df.all1) <- c("sample.size", "rej.exclude", "rej.permute")
 df.all1$level <- rep(0.05, nrow(df.all1))
 
-
+# compute 95% t-test confidence interval
+df.all1$ci.perm <- qt(p = 0.975, df = nreps-1)*df.permute1$sd.rej.rate / sqrt(nreps)
+df.all1$ci.excl <- qt(p = 0.975, df = nreps-1)*df.exclude1$sd.rej.rate / sqrt(nreps)
 
 
 
@@ -297,6 +309,8 @@ p13 <- ggplot(df.all13, aes(sample.size)) +
   geom_line(aes(y = rej.exclude, colour = "exclude environment", linetype = "exclude environment")) + 
   geom_line(aes(y = rej.permute, colour = "permute environment", linetype = "permute environment")) +
   geom_line(aes(y = level, colour = "desired level (0.05)", linetype = "desired level (0.05)")) +
+  geom_ribbon(aes(ymin = rej.exclude - ci.excl, ymax = rej.exclude + ci.excl), fill = color.palette[1], alpha = 0.2) +
+  geom_ribbon(aes(ymin = rej.permute - ci.perm, ymax = rej.permute + ci.perm), fill = color.palette[3], alpha = 0.2) +
   coord_cartesian(ylim=c(0,1)) +
   scale_color_manual(values = c("desired level (0.05)" = "black", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
   scale_linetype_manual(values = c("desired level (0.05)" = "dotted", "exclude environment" = "solid", "permute environment" = "solid")) +
@@ -314,6 +328,8 @@ p1 <- ggplot(df.all1, aes(sample.size)) +
   geom_line(aes(y = rej.exclude, colour = "exclude environment", linetype = "exclude environment")) + 
   geom_line(aes(y = rej.permute, colour = "permute environment", linetype = "permute environment")) +
   geom_line(aes(y = level, colour = "desired level (0.05)", linetype = "desired level (0.05)")) +
+  geom_ribbon(aes(ymin = rej.exclude - ci.excl, ymax = rej.exclude + ci.excl), fill = color.palette[1], alpha = 0.2) +
+  geom_ribbon(aes(ymin = rej.permute - ci.perm, ymax = rej.permute + ci.perm), fill = color.palette[3], alpha = 0.2) +
   coord_cartesian(ylim=c(0,1)) +
   scale_color_manual(values = c("desired level (0.05)" = "black", "exclude environment" = color.palette[1], "permute environment" = color.palette[3])) +
   scale_linetype_manual(values = c("desired level (0.05)" = "dotted", "exclude environment" = "solid", "permute environment" = "solid")) +

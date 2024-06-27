@@ -109,7 +109,7 @@ for(b in 1:nreps){
     # set intervention strength
     t <- int.strength[i]
     
-    # generate data from the semirandom SCM
+    # generate data from the random SCM
     s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, t = t)
     
     # extract training data
