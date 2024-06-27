@@ -64,7 +64,7 @@ icp.methods <- c("delong.rf", "delong.glm", "tram.rf", "tram.glm", "correlation"
 
 
 # fixed number of n observations per environment => 5*n observations in total
-n <- 100
+n <- 250
 
 # number of different intervention strengths to consider
 nt <- 10
@@ -105,7 +105,7 @@ for(b in 1:nreps){
     t <- int.strength[i]
     
     # generate data from the semirandom SCM
-    s <- generate.samples.semirandom(n = n, n.test = 1000, t = t)
+    s <- generate.samples.semirandom(n = n, n.test = 1000, int.strength.train = 3, t = t)
     
     # extract training data
     sample <- s$sample_train
@@ -204,8 +204,8 @@ sd.plot.FWER.int <- melt(df.FWER.sd.int, id.vars = "intervention.strength", vari
 
 
 # compute t-test confidence intervals
-df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
-df.plot.FWER.int$ci <- sd.plot.FWER.int$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
+df.plot.FWER.int$ci <- sd.plot.FWER.int$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 
 
@@ -289,11 +289,11 @@ ggsave(filename = file.path(script_dir, "saved_plots/ICP_level_power_semirandom_
 nt <- 10
 
 # this is the vector of different samples per environment => in total, we have 5 times that number
-sample.size <- floor(seq(from = 20, to = 200, length = nt))
+sample.size <- floor(seq(from = 20, to = 250, length = nt))
 
 
 # fixed intervention strength:
-t <- 0.5
+t <- 1
 
 #-------------------------------------------------------------------------------
 
@@ -329,7 +329,7 @@ for(b in 1:nreps){
     n <- sample.size[i]
     
     # generate data from the semirandom SCM
-    s <- generate.samples.semirandom(n = n, n.test = 1000, t = t)
+    s <- generate.samples.semirandom(n = n, n.test = 1000, int.strength.train = 3, t = t)
     
     # extract training data
     sample <- s$sample_train
@@ -429,8 +429,8 @@ sd.plot.FWER.samp <- melt(df.FWER.sd.samp,  id.vars = "sample.size", variable.na
 
 
 # compute t-test confidence intervals
-df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
-df.plot.FWER.samp$ci <- sd.plot.FWER.samp$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
+df.plot.FWER.samp$ci <- sd.plot.FWER.samp$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 df.plot.jaccard.samp$sample.size <- 5*df.plot.jaccard.samp$sample.size
 df.plot.FWER.samp$sample.size <- 5*df.plot.FWER.samp$sample.size

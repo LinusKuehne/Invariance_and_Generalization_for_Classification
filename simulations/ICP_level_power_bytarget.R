@@ -38,7 +38,7 @@ sets[[1]] <- 0
 nreps <- 300
 
 # number of observations per environment => 5*n total observations
-n <- 150
+n <- 250
 
 # intervention strength scaling
 t <- 1

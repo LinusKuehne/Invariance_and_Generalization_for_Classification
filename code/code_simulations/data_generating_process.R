@@ -1004,7 +1004,7 @@ dag2sample.semirandom <- function(d, n, n.test, num.int, dag.full, dag.cov, var.
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
 # mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
-generate.one.env.semirandom <- function(env.name, d, n, num.int, dag.full, dag.cov, top.order, weights.SCM, var.names, t, usage, int.strength.train = 8, int.strength.test = 2, mod){
+generate.one.env.semirandom <- function(env.name, d, n, num.int, dag.full, dag.cov, top.order, weights.SCM, var.names, t, usage, int.strength.train = 2, int.strength.test = 8, mod){
 
   
   # covariate names (just "X1", "X2", ...)
