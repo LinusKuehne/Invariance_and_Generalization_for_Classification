@@ -70,7 +70,7 @@ nreps <- 300
 #-------------------------------------------------------------------------------
 
 # fixed number of n observations per environment => 5*n observations in total
-n <- 100
+n <- 250
 
 # number of different intervention strengths to consider
 nt <- 10
@@ -195,7 +195,7 @@ sd.plot.jaccard.int <- melt(df.jaccard.sd.int, id.vars = "intervention.strength"
 
 
 # compute t-test confidence intervals
-df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.int$ci <- sd.plot.jaccard.int$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 
 
@@ -247,11 +247,11 @@ p.jaccard.int <- ggplot(df.plot.jaccard.int, aes(intervention.strength, value)) 
 nt <- 10
 
 # this is the vector of different samples per environment => in total, we have 5 times that number
-sample.size <- floor(seq(from = 20, to = 200, length = nt))
+sample.size <- floor(seq(from = 20, to = 250, length = nt))
 
 
 # fixed intervention strength:
-t <- 0.5
+t <- 1
 
 #-------------------------------------------------------------------------------
 
@@ -370,7 +370,7 @@ df.plot.jaccard.samp <- melt(df.jaccard.samp,  id.vars = "sample.size", variable
 sd.plot.jaccard.samp <- melt(df.jaccard.sd.samp,  id.vars = "sample.size", variable.name = 'Candidate')
 
 # compute t-test confidence intervals
-df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.975, df = nreps - 1) / sqrt(nreps)
+df.plot.jaccard.samp$ci <- sd.plot.jaccard.samp$value * qt(0.95, df = nreps - 1) / sqrt(nreps)
 
 
 
