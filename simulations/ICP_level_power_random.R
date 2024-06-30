@@ -42,7 +42,7 @@ sets[[1]] <- 0
 
 
 # number of simulation repetitions (nreps = 300 would take roughly 30 h for both experiments combined)
-nreps <- 300
+nreps <- 500
 
 
 icp.methods <- c("delong.rf", "delong.glm", "tram.rf", "tram.glm", "correlation", "residual", "oracle")
@@ -110,7 +110,7 @@ for(b in 1:nreps){
     t <- int.strength[i]
     
     # generate data from the random SCM
-    s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = 3, t = t)
+    s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, t = t)
     
     # extract training data
     sample <- s$sample_train
@@ -336,7 +336,7 @@ for(b in 1:nreps){
     n <- sample.size[i]
     
     # generate data from the random SCM
-    s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = 3, t = t)
+    s <- generate.samples.random(n = n, n.test = 1000, d = d, max.pa = max.pa, num.int = num.int, t = t)
     
     # extract training data
     sample <- s$sample_train
