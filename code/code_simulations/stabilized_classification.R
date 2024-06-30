@@ -1,43 +1,54 @@
-
-
-
+# in this script, the function "stabilizedClassification" and the corresponding
+# prediction function are implemented, plus several auxiliary functions used 
+# by stabilizedClassification
 
 
 library(ranger)
 
 
 
-
-c.pred <- function(Q, sample, a.pred, B = 100, mod){
+# computes the prediciveness cutoff with a bootstrap procedure
+# Smax: most predictive invariant subset
+# sample: dataframe where the first d columns are the covariates named X1, ..., Xd. Contains also the response Y
+# a.pred: predictiveness tuning parameter
+# B: number of bootstrap iterations
+# mod: model used for fitting (either "RF" or "GLM")
+c.pred <- function(Smax, sample, a.pred, B = 100, mod){
   
   s.pred.vec <- numeric(B)
   
   for(b in 1:B){
     
+    # create bootstrap sample
     boot.ind <- base::sample(x = 1:nrow(sample), size = nrow(sample), replace = T)
     boot.sample <- sample[boot.ind,]
     
+    # if Smax is the empty set
     preds <- rep(mean(boot.sample$Y), nrow(sample[-boot.ind,]))
     
-    if(sum(Q)>0.0001){
+    # if Smax is NOT the empty set
+    if(sum(Smax)>0.0001){
       
       if(mod == "RF"){
-        boot.model <- ranger(y = as.factor(boot.sample$Y), x = boot.sample[, Q, drop = F], probability = T)
-        preds <- predict(boot.model, data = sample[-boot.ind, Q, drop = F])$predictions[,"1"]
+        boot.model <- ranger(y = as.factor(boot.sample$Y), x = boot.sample[, Smax, drop = F], probability = T)
+        preds <- predict(boot.model, data = sample[-boot.ind, Smax, drop = F])$predictions[,"1"]
       }
       
       if(mod == "GLM"){
        
-        x.strings <- paste0("X", Q)
+        # create the correct model formula for the glm interface
+        x.strings <- paste0("X", Smax)
         rhs <- paste(x.strings, collapse = " + ")
         form <- as.formula(paste("Y", "~", rhs))
+        
         boot.model <- glm(formula = form, family = binomial(link = "logit"), data = boot.sample)
         
-        preds <- predict(boot.model, newdata = sample[-boot.ind, Q, drop = F], type = "response")
+        preds <- predict(boot.model, newdata = sample[-boot.ind, Smax, drop = F], type = "response")
         
       }
     }
     
+    # compute the negative BCE score
     s.pred.vec[b] <- nBCE(y = sample[-boot.ind, "Y"], y.hat = preds)
     
   }
@@ -53,9 +64,14 @@ c.pred <- function(Q, sample, a.pred, B = 100, mod){
 
 
 
-
+# function to fit models on the invariant sets to evaluate predictiveness and later use these models for actual predictions
+# sets.train: subset of the glob. variable "sets", denotes the subsets for which we should fit the models
+# sample: dataframe where the first d columns are the covariates named X1, ..., Xd. Contains also the response Y
+# mod: model used for fitting (either "RF" or "GLM")
+# usage: either "train" (compute out-of-sample wBCE scores) or "predict" (don't compute out-of-sample wBCE scores, saves time)
 model.trainer <- function(sets.train, sample, mod, usage){
   
+  # store the fitted models in this list
   models.out <- list()
   nBCE.scores <- numeric(length(sets.train))
   
@@ -63,13 +79,15 @@ model.trainer <- function(sets.train, sample, mod, usage){
   for(s in 1:length(sets.train)){
     set <- sets.train[[s]]
     
-    # empty set?
+    # distinuish whether set is empty or not
     if(sum(set) < 0.0001){
       
+      # model trained on empty set is just encoded as the mean of the responses (the best we can do)
       models.out[[s]] <- mean(sample$Y)
       
       pred <- rep(mean(sample$Y), nrow(sample))
       
+      # compute score
       nBCE.scores[s] <- nBCE(y = sample$Y, y.hat = pred)
       
     } else{
@@ -78,8 +96,9 @@ model.trainer <- function(sets.train, sample, mod, usage){
         rf <- ranger(y = as.factor(sample$Y), x = sample[, set, drop = F], probability = T)
         models.out[[s]] <- rf
         
-        preds <- rf$predictions[,"1"]
         
+        # compute score on OOB samples
+        preds <- rf$predictions[,"1"]
         nBCE.scores[s] <- nBCE(y = sample$Y, y.hat = preds)
       }
       
@@ -93,6 +112,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
         
         models.out[[s]] <- lr
         
+        # we will compute the scores later if usage == "train", because we need CV 
       }
     }
   }
@@ -101,6 +121,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
   
   if(mod == "GLM" && usage == "train"){
     
+    # get K-fold CV folds
     K <- 10
     folds <- base::sample(cut(1:nrow(sample), breaks = K, labels = F), replace = F)
     
@@ -108,6 +129,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
     
     for(k in 1:K){
       
+      # separate train and test set in CV
       test.ind <- which(folds == k)
       samp.train <- sample[-test.ind, ]
       samp.test <- sample[test.ind, ]
@@ -116,10 +138,11 @@ model.trainer <- function(sets.train, sample, mod, usage){
       for(s in 1:length(sets.train)){
         set <- sets.train[[s]]
         
-        # empty set?
+        # distinuish whether set is empty or not
         if(sum(set) < 0.0001){
           pred <- rep(mean(samp.train$Y), length(test.ind))
           
+          # compute score for this set and this fold
           score.mat[k, s] <- nBCE(y = samp.test$Y, y.hat = pred)
           
         } else{
@@ -130,12 +153,13 @@ model.trainer <- function(sets.train, sample, mod, usage){
             
           pred <- predict(lr, newdata = samp.test[, set, drop = F], type = "response")
             
+          # compute score for this set and this fold
           score.mat[k, s] <- nBCE(y = samp.test$Y, y.hat = pred)
-          
         }
       }
     }
     
+    # average the scores over all folds
     nBCE.scores <- colMeans(score.mat)
   }
   
@@ -150,12 +174,15 @@ model.trainer <- function(sets.train, sample, mod, usage){
 
 
 
-
-# either sets (list of sets in [d] which should be tested for stability) or d
-# (number of covariates) must be given. If only d is given, sets is set to 
-# powerSet(1:d). If sets is given, d is ignored
-# The first d columns of sample are the covariates named as X1, ..., Xd
-
+# main function for stabilized classification. Returns the invariant sets, the most predictive inv. sets, and models fitted on these sets
+# sample: dataframe where the first d columns are the covariates named X1, ..., Xd. Contains also the response Y and the Env
+# test: invariance test, one of ("delong.rf", "delong.glm", "tram.rf", "tram.glm", "corr", "residual")
+# a.inv: tuning parameter regarding invariance (set is "invariant" if its p-value is >a.inv)
+# a.pred: tuning parameter to compute the predictiveness cutoff parameter
+# mod.internal: model (either "RF" or "GLM") used to rank the subsets in terms of predictiveness
+# mod.output: model (either "RF" or "GLM") which are fitted on the most predictive invariant subsets and are returned
+# B: number of bootstrap iterations used to compute the predictiveness cutoff
+# verbose: (boolean) whether the function should print out statements regarding the progress
 stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, mod.internal, mod.output, B = 100, verbose = T){
   
   
@@ -209,17 +236,17 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
   vec.s.pred <- m$nBCE.scores
   
   # find most predictive invariant model
-  Q.ind <- which.min(vec.s.pred)
-  Q <- inv.sets[[Q.ind]]
+  Smax.ind <- which.min(vec.s.pred)
+  Smax <- inv.sets[[Smax.ind]]
   
   
   if(verbose){
-    cat("The most predictive invariant set is", paste(Q, collapse = " "), "\n")
+    cat("The most predictive invariant set is", paste(Smax, collapse = " "), "\n")
     print("Compute cutoff c_pred(a_pred)")  
     }
   
   
-  c <- c.pred(Q, sample, a.pred = a.pred, B = B, mod = mod.internal)
+  c <- c.pred(Smax, sample, a.pred = a.pred, B = B, mod = mod.internal)
   
   
   opt.sets <- inv.sets[which(vec.s.pred < c)]
@@ -228,7 +255,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
     if(verbose){
       print("no set satisfies s.pred(S) >= c.pred")
     }
-    opt.sets[[1]] <- Q
+    opt.sets[[1]] <- Smax
   }
   
   
@@ -236,7 +263,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
     opt.models <- m$models[which(vec.s.pred < c)]
     
     if(length(opt.sets) == 0){
-      opt.models[[1]] <- m$models[[Q.ind]]
+      opt.models[[1]] <- m$models[[Smax.ind]]
     }
   } else{
     
@@ -247,7 +274,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
   
   
   
-  result <- list("inv.sets" = inv.sets, "opt.sets" = opt.sets, "opt.models" = opt.models)
+  result <- list("inv.sets" = inv.sets, "opt.sets" = opt.sets, "opt.models" = opt.models, "mod.output" = mod.output)
   
   return(result)
 }
@@ -259,7 +286,12 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
 
 # mod must be the same as mod.output for stabClassMod!!
 
-predict.stabClass <- function(stabClassMod, newsample, mod){
+# used to make predictions for new data using a fitted stabilizedClassificaiton object 
+# stabClassMod: fitted stabilizedClassificaiton object 
+# newsample: new data, same structure as sample used to fit stabClassMod (just needs the covariates)
+predict.stabClass <- function(stabClassMod, newsample){
+  
+  mod <- stabClassMod$mod.output
   
   opt.models <- stabClassMod$opt.models
   opt.sets <- stabClassMod$opt.sets
@@ -292,19 +324,6 @@ predict.stabClass <- function(stabClassMod, newsample, mod){
   
   return(result.pred)
 }
-
-
-
-
-
-
-# I think RFs are bad under strong interventions, because they'd have to extrapolate. Data in these 
-# regions never observed have no splits -> bad performance because outside of the observed training 
-# data, the RF will be essentially constant.
-
-# If Y were continuous, then linear regression would also work outside of observed data on stable sets
-# because E[Y|S] would be linear in x^S. In analogy, I think the GLM should also still work (better at least)
-
 
 
 
