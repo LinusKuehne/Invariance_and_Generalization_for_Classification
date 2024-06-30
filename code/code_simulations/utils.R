@@ -14,6 +14,46 @@ runifstrong <- function(n, min, max){
 
 
 
+# computes negative binary cross-entropy
+# y: label in {0,1} 
+# y.hat: probability in (0,1) (probability that Y=1 given some predictors)
+nBCE <- function(y, y.hat){
+  
+  y.hat.norm <- y.hat
+  
+  # cap extreme values such that BCE is still defined
+  y.hat.norm[y.hat == 1] <- 0.99999999999
+  y.hat.norm[y.hat == 0] <- 0.00000000001
+  
+  bce <- y*log(y.hat.norm) + (1-y)*log(1-y.hat.norm)
+  
+  return(-mean(bce))
+}
+
+
+
+# computes weighted negative binary cross-entropy
+# y: label in {0,1} 
+# y.hat: probability in (0,1) (probability that Y=1 given some predictors)
+nBCE.weighted <- function(y, y.hat){
+
+  ones <- mean(y) # proportion of 1's
+  zeros <- 1-ones # proportion of 0's
+  w1 <- 1/(2*ones)
+  w0 <- 1/(2*zeros)
+  
+  
+  y.hat.norm <- y.hat
+  y.hat.norm[y.hat > 0.99999999999] <- 0.99999999999
+  y.hat.norm[y.hat < 0.00000000001] <- 0.00000000001
+  
+  bce <- w1*y*log(y.hat.norm) + w0*(1-y)*log(1-y.hat.norm)
+  
+  return(-mean(bce))
+}
+
+
+
 
 
 # compute linear combination of columns in dat using the vector coef as weights
