@@ -43,7 +43,7 @@ n <- 250
 n.sim <- 500
 
 # number of bootstrap samples to compute c.pred
-B <- 50
+B <- 100
 
 # the tests to be used
 test.1 = "tram.glm"
@@ -85,7 +85,7 @@ negwBCEscores.mod1 <- accuracies.mod1
 for(sim in 1:n.sim){
   print(paste0("Simulation iteration ",sim, " out of ", n.sim))
   
-  # generate a sample the standard SCM
+  # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 2.5, mod = "logreg")
   
   # extract generated datasets
@@ -185,7 +185,7 @@ negwBCEscores.mod2 <- accuracies.mod2
 for(sim in 1:n.sim){
   print(paste0("Simulation iteration ",sim, " out of ", n.sim))
   
-  # generate a sample the standard SCM
+  # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "probit")
   
   # extract generated datasets
@@ -278,7 +278,7 @@ negwBCEscores.mod3 <- accuracies.mod3
 for(sim in 1:n.sim){
   print(paste0("Simulation iteration ",sim, " out of ", n.sim))
   
-  # generate a sample the standard SCM
+  # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "nonlin")
   
   # extract generated datasets
@@ -372,7 +372,7 @@ negwBCEscores.mod4 <- accuracies.mod4
 for(sim in 1:n.sim){
   print(paste0("Simulation iteration ",sim, " out of ", n.sim))
   
-  # generate a sample the standard SCM
+  # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "bump")
   
   # extract generated datasets
