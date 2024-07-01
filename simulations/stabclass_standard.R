@@ -460,8 +460,8 @@ save(data.acc.mod1,
 # generate plots for all models
 #-------------------------------------------------------------------------------
 
-min.wbce <- min(min(data.wbce.mod1$value), min(data.wbce.mod2$value), min(data.wbce.mod3$value), min(data.wbce.mod4$value))
-max.wbce <- max(max(data.wbce.mod1$value), max(data.wbce.mod2$value), max(data.wbce.mod3$value), max(data.wbce.mod4$value))
+min.wbce <- -0.1 + min(min(data.wbce.mod1$value), min(data.wbce.mod2$value), min(data.wbce.mod3$value), min(data.wbce.mod4$value))
+max.wbce <- 0.1 + max(max(data.wbce.mod1$value), max(data.wbce.mod2$value), max(data.wbce.mod3$value), max(data.wbce.mod4$value))
 
 
 size <- 10

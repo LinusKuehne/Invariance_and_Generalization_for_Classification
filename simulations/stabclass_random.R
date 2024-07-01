@@ -40,7 +40,7 @@ n <- 250
 
 # number of simulation runs 
 # n.sim = 500 should take around 1/2 day on my MB
-n.sim <- 15
+n.sim <- 500
 
 # number of bootstrap samples to compute c.pred
 B <- 100
