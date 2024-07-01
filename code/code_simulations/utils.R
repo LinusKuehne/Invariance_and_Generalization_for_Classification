@@ -308,7 +308,8 @@ generate.varnames <- function(d, Y.ind, num.int){
 # dag.full: dagitty dag including I's
 # dag.cov: dagitty dag without I's
 # num.int: number of interventions
-stableBlanket <- function(dag.full, dag.cov, num.int){
+# number of covariates (including Y)
+stableBlanket <- function(dag.full, dag.cov, num.int, d){
   
   
   # covariate names (just "X1", "X2", ...)

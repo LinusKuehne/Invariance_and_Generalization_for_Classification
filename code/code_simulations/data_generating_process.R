@@ -158,32 +158,33 @@ gen.sample.standard <- function(n, t=1, mod = "logreg"){
 # n.test: number of observations per test environment => total 10*n.test data points in test sample
 # int.strength.train: max magnitude of interventions in training data
 # int.strength.test: max magnitude of interventions in test data
-gen.sample.fixed <- function(n, n.test, int.strength.train = 1, int.strength.test = 5){
+# mod: which model Y follows. Implemented: logistic regression ("logreg"), probit regression ("probit"), non-linear logistic regression ("nonlin"), bump model ("bump")
+gen.sample.fixed <- function(n, n.test, int.strength.train = 1, int.strength.test = 5, mod = "logreg"){
   
   # sample intervention values for the five environments
   train.int <- runif(n = 5, min = -int.strength.train, max = int.strength.train)
   
-  s.1 <- sim.SCM(n = n, c = train.int[1], env = "train1")
-  s.2 <- sim.SCM(n = n, c = train.int[2], env = "train2")
-  s.3 <- sim.SCM(n = n, c = train.int[3], env = "train3")
-  s.4 <- sim.SCM(n = n, c = train.int[4], env = "train4")
-  s.5 <- sim.SCM(n = n, c = train.int[5], env = "train5")
+  s.1 <- sim.SCM.mod(n = n, c = train.int[1], env = "train1", mod = mod)
+  s.2 <- sim.SCM.mod(n = n, c = train.int[2], env = "train2", mod = mod)
+  s.3 <- sim.SCM.mod(n = n, c = train.int[3], env = "train3", mod = mod)
+  s.4 <- sim.SCM.mod(n = n, c = train.int[4], env = "train4", mod = mod)
+  s.5 <- sim.SCM.mod(n = n, c = train.int[5], env = "train5", mod = mod)
   
   sample_train <- rbind(s.1, s.2, s.3, s.4, s.5)
   
   # interventions for testing sampled uniformly from [-int.strength.test, -int.strength.train] union [int.strength.train, int.strength.test]
   test.int <- runifstrong(n = 10, min = int.strength.train, max = int.strength.test)
   
-  t.1 <- sim.SCM(n = n.test, c = test.int[1], env = "test1")
-  t.2 <- sim.SCM(n = n.test, c = test.int[2], env = "test2")
-  t.3 <- sim.SCM(n = n.test, c = test.int[3], env = "test3")
-  t.4 <- sim.SCM(n = n.test, c = test.int[4], env = "test4")
-  t.5 <- sim.SCM(n = n.test, c = test.int[5], env = "test5")
-  t.6 <- sim.SCM(n = n.test, c = test.int[6], env = "test6")
-  t.7 <- sim.SCM(n = n.test, c = test.int[7], env = "test7")
-  t.8 <- sim.SCM(n = n.test, c = test.int[8], env = "test8")
-  t.9 <- sim.SCM(n = n.test, c = test.int[9], env = "test9")
-  t.10 <- sim.SCM(n = n.test, c = test.int[10], env = "test10")
+  t.1 <- sim.SCM.mod(n = n.test, c = test.int[1], env = "test1", mod = mod)
+  t.2 <- sim.SCM.mod(n = n.test, c = test.int[2], env = "test2", mod = mod)
+  t.3 <- sim.SCM.mod(n = n.test, c = test.int[3], env = "test3", mod = mod)
+  t.4 <- sim.SCM.mod(n = n.test, c = test.int[4], env = "test4", mod = mod)
+  t.5 <- sim.SCM.mod(n = n.test, c = test.int[5], env = "test5", mod = mod)
+  t.6 <- sim.SCM.mod(n = n.test, c = test.int[6], env = "test6", mod = mod)
+  t.7 <- sim.SCM.mod(n = n.test, c = test.int[7], env = "test7", mod = mod)
+  t.8 <- sim.SCM.mod(n = n.test, c = test.int[8], env = "test8", mod = mod)
+  t.9 <- sim.SCM.mod(n = n.test, c = test.int[9], env = "test9", mod = mod)
+  t.10 <- sim.SCM.mod(n = n.test, c = test.int[10], env = "test10", mod = mod)
   
   sample_test <- rbind(t.1, t.2, t.3, t.4, t.5, t.6, t.7, t.8, t.9, t.10)
   
