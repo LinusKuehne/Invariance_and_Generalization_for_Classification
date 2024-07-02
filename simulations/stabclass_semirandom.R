@@ -656,15 +656,15 @@ max.wbce <- 0.1 + max(max(data.eq.wbce.mod1$value), max(data.eq.wbce.mod2$value)
 
 plt.eq.acc.mod1 <- ggplot(data.eq.acc.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod1)))
   ) +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.acc.mod1
@@ -673,14 +673,14 @@ plt.eq.acc.mod1 <- ggplot(data.eq.acc.mod1, aes(x=name, y=value, fill=name)) +
 
 plt.neq.acc.mod1 <- ggplot(data.neq.acc.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod1)))
   ) +  xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.acc.mod1
@@ -690,15 +690,15 @@ plt.neq.acc.mod1 <- ggplot(data.neq.acc.mod1, aes(x=name, y=value, fill=name)) +
 
 plt.eq.wbce.mod1 <- ggplot(data.eq.wbce.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod1)))
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod1
@@ -707,15 +707,15 @@ plt.eq.wbce.mod1 <- ggplot(data.eq.wbce.mod1, aes(x=name, y=value, fill=name)) +
 
 plt.neq.wbce.mod1 <- ggplot(data.neq.wbce.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod1)))
   ) +  
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod1
@@ -730,15 +730,15 @@ plt.neq.wbce.mod1 <- ggplot(data.neq.wbce.mod1, aes(x=name, y=value, fill=name))
 
 plt.eq.acc.mod2 <- ggplot(data.eq.acc.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Probit Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod2)))
   ) +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.acc.mod2
@@ -747,14 +747,14 @@ plt.eq.acc.mod2 <- ggplot(data.eq.acc.mod2, aes(x=name, y=value, fill=name)) +
 
 plt.neq.acc.mod2 <- ggplot(data.neq.acc.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Probit Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod2)))
   ) +  xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.acc.mod2
@@ -764,15 +764,15 @@ plt.neq.acc.mod2 <- ggplot(data.neq.acc.mod2, aes(x=name, y=value, fill=name)) +
 
 plt.eq.wbce.mod2 <- ggplot(data.eq.wbce.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Probit Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod2)))
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod2
@@ -781,14 +781,14 @@ plt.eq.wbce.mod2 <- ggplot(data.eq.wbce.mod2, aes(x=name, y=value, fill=name)) +
 
 plt.neq.wbce.mod2 <- ggplot(data.neq.wbce.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Probit Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod2)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod2
@@ -802,15 +802,15 @@ plt.neq.wbce.mod2 <- ggplot(data.neq.wbce.mod2, aes(x=name, y=value, fill=name))
 
 plt.eq.acc.mod3 <- ggplot(data.eq.acc.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Non-Linear Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod3)))
   ) +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.acc.mod3
@@ -819,14 +819,14 @@ plt.eq.acc.mod3 <- ggplot(data.eq.acc.mod3, aes(x=name, y=value, fill=name)) +
 
 plt.neq.acc.mod3 <- ggplot(data.neq.acc.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Non-Linear Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod3)))
   ) +  xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.acc.mod3
@@ -836,15 +836,15 @@ plt.neq.acc.mod3 <- ggplot(data.neq.acc.mod3, aes(x=name, y=value, fill=name)) +
 
 plt.eq.wbce.mod3 <- ggplot(data.eq.wbce.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Non-Linear Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod3)))
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod3
@@ -853,14 +853,14 @@ plt.eq.wbce.mod3 <- ggplot(data.eq.wbce.mod3, aes(x=name, y=value, fill=name)) +
 
 plt.neq.wbce.mod3 <- ggplot(data.neq.wbce.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Non-Linear Logistic Regression Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod3)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod3
@@ -873,15 +873,15 @@ plt.neq.wbce.mod3 <- ggplot(data.neq.wbce.mod3, aes(x=name, y=value, fill=name))
 
 plt.eq.acc.mod4 <- ggplot(data.eq.acc.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Bump Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod4)))
   ) +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.acc.mod4
@@ -890,14 +890,14 @@ plt.eq.acc.mod4 <- ggplot(data.eq.acc.mod4, aes(x=name, y=value, fill=name)) +
 
 plt.neq.acc.mod4 <- ggplot(data.neq.acc.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Bump Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod4)))
   ) +  xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.acc.mod4
@@ -907,15 +907,15 @@ plt.neq.acc.mod4 <- ggplot(data.neq.acc.mod4, aes(x=name, y=value, fill=name)) +
 
 plt.eq.wbce.mod4 <- ggplot(data.eq.wbce.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Bump Model"),
     subtitle = eval(substitute(expression("MB(Y)" == "SB(Y)" * " (" * v * " repetitions)"), list(v = n.eq.mod4)))
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod4
@@ -924,14 +924,14 @@ plt.eq.wbce.mod4 <- ggplot(data.eq.wbce.mod4, aes(x=name, y=value, fill=name)) +
 
 plt.neq.wbce.mod4 <- ggplot(data.neq.wbce.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   labs(
     title = expression("Bump Model"),
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod4)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod4

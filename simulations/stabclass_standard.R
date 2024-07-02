@@ -471,25 +471,25 @@ size <- 10
 
 plt.acc.mod1 <- ggplot(data.acc.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Logistic Regression Model") +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-#plt.acc.mod1
+plt.acc.mod1
 
 
 plt.wbce.mod1 <- ggplot(data.wbce.mod1, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Logistic Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.wbce.mod1
@@ -503,12 +503,12 @@ plt.wbce.mod1 <- ggplot(data.wbce.mod1, aes(x=name, y=value, fill=name)) +
 
 plt.acc.mod2 <- ggplot(data.acc.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Probit Regression Model") +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.acc.mod2
@@ -516,12 +516,12 @@ plt.acc.mod2
 
 plt.wbce.mod2 <- ggplot(data.wbce.mod2, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Probit Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod2
@@ -535,12 +535,12 @@ plt.wbce.mod2
 
 plt.acc.mod3 <- ggplot(data.acc.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Non-Linear Logistic Regression Model") +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.acc.mod3
@@ -548,12 +548,12 @@ plt.acc.mod3
 
 plt.wbce.mod3 <- ggplot(data.wbce.mod3, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Non-Linear Logistic Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod3
@@ -568,12 +568,12 @@ plt.wbce.mod3
 
 plt.acc.mod4 <- ggplot(data.acc.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Bump Model") +
   xlab("") +
   ylim(0,1)+
-  ylab("Test accuracy") +
+  ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.acc.mod4
@@ -581,12 +581,12 @@ plt.acc.mod4
 
 plt.wbce.mod4 <- ggplot(data.wbce.mod4, aes(x=name, y=value, fill=name)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-  geom_jitter(color="black", size=0.2, alpha=0.9) +
+  scale_fill_viridis(discrete = TRUE, alpha=0.8) +
+  geom_jitter(color="black", size=0.025, alpha=0.2) +
   ggtitle("Bump Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Test negative weighted BCE") +
+  ylab("Negative weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod4
