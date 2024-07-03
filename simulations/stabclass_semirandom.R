@@ -648,8 +648,8 @@ save(accuracies.mod1,
 
 # plotting window
 min.wbce <- -0.1 + min(min(data.eq.wbce.mod1$value), min(data.eq.wbce.mod2$value), min(data.eq.wbce.mod3$value), min(data.eq.wbce.mod4$value), min(data.neq.wbce.mod1$value), min(data.neq.wbce.mod2$value), min(data.neq.wbce.mod3$value), min(data.neq.wbce.mod4$value))
-max.wbce <- 0.1 + max(max(data.eq.wbce.mod1$value), max(data.eq.wbce.mod2$value), max(data.eq.wbce.mod3$value), max(data.eq.wbce.mod4$value), max(data.neq.wbce.mod1$value), max(data.neq.wbce.mod2$value), max(data.neq.wbce.mod3$value), max(data.neq.wbce.mod4$value))
-
+#max.wbce <- 0.1 + max(max(data.eq.wbce.mod1$value), max(data.eq.wbce.mod2$value), max(data.eq.wbce.mod3$value), max(data.eq.wbce.mod4$value), max(data.neq.wbce.mod1$value), max(data.neq.wbce.mod2$value), max(data.neq.wbce.mod3$value), max(data.neq.wbce.mod4$value))
+max.wbce <- 5
 
 
 # logistic regression ----------------------------------------------------------
