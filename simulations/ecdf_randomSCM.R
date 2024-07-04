@@ -1,5 +1,4 @@
-# In this script, we generate data from the random SCM, and from the semi-random SCM with 
-# fixed DAG and random response and edge weights, and compute the p-values
+# In this script, we generate data from the random SCM and compute the p-values
 # using all of our invariance tests for the invariant sets. 
 # We then plot the empirical CDF (ECDF) of these p-values (p-values of all invariant
 # sets pooled together). If the tests are level, the ECDFs should lie on or below the diagonal.
@@ -113,76 +112,20 @@ for(b in 1:nreps){
 }
 
 
-
-
-#-------------------------------------------------------------------------------
-
-
-
-
-#-------------------------------------------------------------------------------
-# run the simulation for the semirandom SCM
-#-------------------------------------------------------------------------------
-
-
-set.seed(1)
-
-
-# in these vectors, we pool together the pvalues for all invariant sets across all simulations
-null.pvals.delong.rf.semirand <- numeric(0)
-null.pvals.delong.glm.semirand <- numeric(0)
-null.pvals.tram.rf.semirand <- numeric(0)
-null.pvals.tram.glm.semirand <- numeric(0)
-null.pvals.corr.semirand <- numeric(0)
-null.pvals.residual.semirand <- numeric(0)
-
-
-
-for(b in 1:nreps){
-  print(paste0("Simulation iteration ", b, " out of ", nreps))
-  
-  # generate a sample (n.test is arbitrary, we just use "training" data)
-  s <- generate.samples.semirandom(n = n, n.test = 1000, t = 1)
-  sample <- s$sample_train
-  
-  # compute p-values
-  pvals <- pvalues.all(sample)
-  
-  # find invariant sets from DAG 
-  inv.sets <- int.stable.sets(s$dag.full, d = d, num.int = num.int)
-  
-  # find the indeces of the invariant sets in the list of all subsets
-  ind.inv.sets <- (1:length(ps))[ps %in% inv.sets]
-  
-  # find the rows corresponding to the invariant sets
-  pvals.inv <- pvals[ind.inv.sets, ]
-  
-  # append the pvalues for the invariant sets to the vectors
-  null.pvals.delong.rf.semirand <- c(null.pvals.delong.rf.semirand, pvals.inv$delong.rf)
-  null.pvals.delong.glm.semirand <- c(null.pvals.delong.glm.semirand, pvals.inv$delong.glm)
-  null.pvals.tram.rf.semirand <- c(null.pvals.tram.rf.semirand, pvals.inv$tram.rf)
-  null.pvals.tram.glm.semirand <- c(null.pvals.tram.glm.semirand, pvals.inv$tram.glm)
-  null.pvals.corr.semirand <- c(null.pvals.corr.semirand, pvals.inv$correlation)
-  null.pvals.residual.semirand <- c(null.pvals.residual.semirand, pvals.inv$residual)
-  
-}
-
-
 save(null.pvals.delong.rf.randDAG, 
      null.pvals.delong.glm.randDAG, 
      null.pvals.tram.rf.randDAG,
      null.pvals.tram.glm.randDAG,
      null.pvals.corr.randDAG,
      null.pvals.residual.randDAG,
-     null.pvals.delong.rf.semirand, 
-     null.pvals.delong.glm.semirand, 
-     null.pvals.tram.rf.semirand,
-     null.pvals.tram.glm.semirand,
-     null.pvals.corr.semirand,
-     null.pvals.residual.semirand,
-     file = file.path(script_dir, "saved_data/ecdf_both_randomSCMs.rdata"))
+     file = file.path(script_dir, "saved_data/ecdf_randomSCM.rdata"))
+
 
 #-------------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -200,12 +143,6 @@ df.invariant.ecdf.randDAG <- data.frame(
 )
 
 
-df.invariant.ecdf.semirand <- data.frame(
-  x = c(null.pvals.delong.rf.semirand, null.pvals.delong.glm.semirand, null.pvals.tram.rf.semirand, null.pvals.tram.glm.semirand, null.pvals.corr.semirand, null.pvals.residual.semirand),
-  g = gl(n = 6, k = length(null.pvals.delong.rf.semirand))
-)
-
-
 size <- 10
 
 p.randDAG <- ggplot(df.invariant.ecdf.randDAG, aes(x, colour = g)) +
@@ -215,29 +152,14 @@ p.randDAG <- ggplot(df.invariant.ecdf.randDAG, aes(x, colour = g)) +
   labs(color='') +
   xlab("p-value") +
   ylab("Empirical CDF") +
-  ggtitle("Random SCM") +
-  theme_bw(base_size = size) 
+  ggtitle("ECDF of p-values of Invariant Subsets") +
+  theme_bw(base_size = size) +
+  theme(legend.position = "bottom", legend.text = element_text(size=size))
 #p.randDAG
 
-p.semirand <- ggplot(df.invariant.ecdf.semirand, aes(x, colour = g)) +
-  stat_ecdf() +
-  geom_abline() +
-  scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
-  labs(color='') +
-  xlab("p-value") +
-  ylab("Empirical CDF") +
-  ggtitle("Semi-Random SCM") +
-  theme_bw(base_size = size) 
-#p.semirand
+ggsave(filename = file.path(script_dir, "saved_plots/ecdf_randomSCM.pdf"), width = 5, height = 5.5)
 
 
-
-
-combined <- p.semirand + p.randDAG & theme(legend.position = "bottom", legend.title=element_blank(), legend.text = element_text(size=size)) 
-
-combined + plot_layout(guides = "collect")
-
-ggsave(filename = file.path(script_dir, "saved_plots/ecdf_both_randomSCMs.pdf"), width = 6, height = 4)
 
 
 
@@ -245,7 +167,7 @@ ggsave(filename = file.path(script_dir, "saved_plots/ecdf_both_randomSCMs.pdf"),
 #-------------------------------------------------------------------------------
 
 
-writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ecdf_both_randomSCMs.txt"))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/ecdf_randomSCM.txt"))
 
 
 
