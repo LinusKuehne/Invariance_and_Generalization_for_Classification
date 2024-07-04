@@ -225,7 +225,7 @@ size <- 10
 
 p.FWER.int <- ggplot(df.plot.FWER.int, aes(intervention.strength, value)) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = FALSE) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = FALSE) +
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black", linewidth = 0.75) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
@@ -240,7 +240,7 @@ p.FWER.int <- ggplot(df.plot.FWER.int, aes(intervention.strength, value)) +
 
 p.jaccard.int <- ggplot(df.plot.jaccard.int, aes(intervention.strength, value)) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
   xlab("Intervention strength") +
@@ -457,7 +457,7 @@ size <- 10
 
 p.FWER.samp <- ggplot(df.plot.FWER.samp, aes(sample.size, value)) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = FALSE) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = FALSE) +
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black", linewidth = 0.75) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
@@ -472,7 +472,7 @@ p.FWER.samp <- ggplot(df.plot.FWER.samp, aes(sample.size, value)) +
 
 p.jaccard.samp <- ggplot(df.plot.jaccard.samp, aes(sample.size, value)) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
   xlab("Sample size") +
