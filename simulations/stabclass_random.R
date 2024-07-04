@@ -704,7 +704,7 @@ plt.eq.wbce.mod1 <- ggplot(data.eq.wbce.mod1, aes(x=name, y=value, fill=name)) +
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod1
@@ -721,7 +721,7 @@ plt.neq.wbce.mod1 <- ggplot(data.neq.wbce.mod1, aes(x=name, y=value, fill=name))
   ) +  
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod1
@@ -778,7 +778,7 @@ plt.eq.wbce.mod2 <- ggplot(data.eq.wbce.mod2, aes(x=name, y=value, fill=name)) +
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod2
@@ -794,7 +794,7 @@ plt.neq.wbce.mod2 <- ggplot(data.neq.wbce.mod2, aes(x=name, y=value, fill=name))
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod2)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod2
@@ -850,7 +850,7 @@ plt.eq.wbce.mod3 <- ggplot(data.eq.wbce.mod3, aes(x=name, y=value, fill=name)) +
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod3
@@ -866,7 +866,7 @@ plt.neq.wbce.mod3 <- ggplot(data.neq.wbce.mod3, aes(x=name, y=value, fill=name))
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod3)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod3
@@ -921,7 +921,7 @@ plt.eq.wbce.mod4 <- ggplot(data.eq.wbce.mod4, aes(x=name, y=value, fill=name)) +
   ) +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.eq.wbce.mod4
@@ -937,7 +937,7 @@ plt.neq.wbce.mod4 <- ggplot(data.neq.wbce.mod4, aes(x=name, y=value, fill=name))
     subtitle = eval(substitute(expression("MB(Y)" != "SB(Y)" * " (" * v * " repetitions)"), list(v = n.neq.mod4)))
   ) +  xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.neq.wbce.mod4

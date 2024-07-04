@@ -213,7 +213,7 @@ alpha <- 0.3
 p.jaccard.int <- ggplot(df.plot.jaccard.int, aes(intervention.strength, value)) +
   scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   coord_cartesian(ylim=c(0.2,1)) +
   xlab("Intervention strength") +
   ylab("Average Jaccard index") +
@@ -391,7 +391,7 @@ df.plot.jaccard.samp$sample.size <- 5*df.plot.jaccard.samp$sample.size
 p.jaccard.samp <- ggplot(df.plot.jaccard.samp, aes(sample.size, value)) +
   scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
   geom_line(aes(colour = Candidate)) +
-  geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
+  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   coord_cartesian(ylim=c(0.3,1)) +
   xlab("Sample size") +
   ylab("Average Jaccard index") +

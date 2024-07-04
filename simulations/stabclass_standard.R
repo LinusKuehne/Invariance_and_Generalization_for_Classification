@@ -489,7 +489,7 @@ plt.wbce.mod1 <- ggplot(data.wbce.mod1, aes(x=name, y=value, fill=name)) +
   ggtitle("Logistic Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 #plt.wbce.mod1
@@ -521,7 +521,7 @@ plt.wbce.mod2 <- ggplot(data.wbce.mod2, aes(x=name, y=value, fill=name)) +
   ggtitle("Probit Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod2
@@ -553,7 +553,7 @@ plt.wbce.mod3 <- ggplot(data.wbce.mod3, aes(x=name, y=value, fill=name)) +
   ggtitle("Non-Linear Logistic Regression Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod3
@@ -586,7 +586,7 @@ plt.wbce.mod4 <- ggplot(data.wbce.mod4, aes(x=name, y=value, fill=name)) +
   ggtitle("Bump Model") +
   xlab("") +
   ylim(min.wbce,max.wbce)+
-  ylab("Negative weighted BCE") +
+  ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
 plt.wbce.mod4
