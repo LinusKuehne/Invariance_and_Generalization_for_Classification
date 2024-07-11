@@ -10,7 +10,7 @@ script_dir <- getwd()
 
 
 # load in the dataset
-load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
+load(file.path(script_dir, "../data/exported_pyrocb.rdata"))
 
 
 # obtain data for the 28 variables we consider
@@ -76,4 +76,11 @@ for(num.var in 1:28){
 }
 
 
+
+
+
+
+
+
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/variable_screening.txt"))
 
