@@ -30,6 +30,8 @@ source(file.path(script_dir, "../code/code_simulations/stabilized_classification
 
 
 
+
+
 # sets to check stability
 sets <- powerSet(1:3)
 sets[[1]] <- c(0)
@@ -50,7 +52,8 @@ test.1 = "tram.glm"
 test.2 = "residual"
 
 
-name <- factor(c(rep("SC (a)",n.sim), rep("SC (b)",n.sim), rep("SC (c)",n.sim), rep("SC (d)",n.sim), rep("Log. Reg.", n.sim), rep("RF", n.sim)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
+name <- factor(c(rep("SB(Y)",n.sim), rep("SC (a)",n.sim), rep("SC (b)",n.sim), rep("SC (c)",n.sim), rep("SC (d)",n.sim), rep("LR", n.sim), rep("RF", n.sim)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
+
 
 
 #-------------------------------------------------------------------------------
@@ -69,13 +72,13 @@ name <- factor(c(rep("SC (a)",n.sim), rep("SC (b)",n.sim), rep("SC (c)",n.sim), 
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod1 <- data.frame(sc.1.rfglm = numeric(n.sim),
-                         sc.1.rfrf = numeric(n.sim),
-                         sc.2.rfglm = numeric(n.sim),
-                         sc.2.rfrf = numeric(n.sim),
-                         glm = numeric(n.sim),
-                         rf = numeric(n.sim)
-                         )
+accuracies.mod1 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
+                              sc.1.rfrf = numeric(n.sim),
+                              sc.2.rfglm = numeric(n.sim),
+                              sc.2.rfrf = numeric(n.sim),
+                              glm = numeric(n.sim),
+                              rf = numeric(n.sim))
 
 
 wBCEscores.mod1 <- accuracies.mod1
@@ -83,7 +86,7 @@ wBCEscores.mod1 <- accuracies.mod1
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 1"))
   
   # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 2.5, mod = "logreg")
@@ -91,6 +94,12 @@ for(sim in 1:n.sim){
   # extract generated datasets
   sample <- s$sample_train
   sample_test <- s$sample_test
+  
+  # predict on stable blanket with RF
+  output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(1,3)], probability = T)
+  pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(1,3)])$predictions[,"1"]
+  accuracies.mod1$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+  wBCEscores.mod1$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -136,12 +145,12 @@ for(sim in 1:n.sim){
 # create a dataframe
 data.acc.mod1 <- data.frame(
   name=name,
-  value=c(accuracies.mod1$sc.1.rfglm, accuracies.mod1$sc.1.rfrf, accuracies.mod1$sc.2.rfglm, accuracies.mod1$sc.2.rfrf, accuracies.mod1$glm, accuracies.mod1$rf)
+  value=c(accuracies.mod1$sb.rf, accuracies.mod1$sc.1.rfglm, accuracies.mod1$sc.1.rfrf, accuracies.mod1$sc.2.rfglm, accuracies.mod1$sc.2.rfrf, accuracies.mod1$glm, accuracies.mod1$rf)
 )
 
 data.wbce.mod1 <- data.frame(
   name=name,
-  value=c(wBCEscores.mod1$sc.1.rfglm, wBCEscores.mod1$sc.1.rfrf, wBCEscores.mod1$sc.2.rfglm, wBCEscores.mod1$sc.2.rfrf, wBCEscores.mod1$glm, wBCEscores.mod1$rf)
+  value=c(wBCEscores.mod1$sb.rf, wBCEscores.mod1$sc.1.rfglm, wBCEscores.mod1$sc.1.rfrf, wBCEscores.mod1$sc.2.rfglm, wBCEscores.mod1$sc.2.rfrf, wBCEscores.mod1$glm, wBCEscores.mod1$rf)
 )
 
 
@@ -169,13 +178,14 @@ data.wbce.mod1 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod2 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod2 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
+
 
 
 wBCEscores.mod2 <- accuracies.mod2
@@ -183,7 +193,7 @@ wBCEscores.mod2 <- accuracies.mod2
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 2"))
   
   # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "probit")
@@ -191,6 +201,12 @@ for(sim in 1:n.sim){
   # extract generated datasets
   sample <- s$sample_train
   sample_test <- s$sample_test
+  
+  # predict on stable blanket with RF
+  output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(1,3)], probability = T)
+  pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(1,3)])$predictions[,"1"]
+  accuracies.mod2$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+  wBCEscores.mod2$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -236,13 +252,14 @@ for(sim in 1:n.sim){
 # create a dataframe
 data.acc.mod2 <- data.frame(
   name=name,
-  value=c(accuracies.mod2$sc.1.rfglm, accuracies.mod2$sc.1.rfrf, accuracies.mod2$sc.2.rfglm, accuracies.mod2$sc.2.rfrf, accuracies.mod2$glm, accuracies.mod2$rf)
+  value=c(accuracies.mod2$sb.rf, accuracies.mod2$sc.1.rfglm, accuracies.mod2$sc.1.rfrf, accuracies.mod2$sc.2.rfglm, accuracies.mod2$sc.2.rfrf, accuracies.mod2$glm, accuracies.mod2$rf)
 )
 
 data.wbce.mod2 <- data.frame(
   name=name,
-  value=c(wBCEscores.mod2$sc.1.rfglm, wBCEscores.mod2$sc.1.rfrf, wBCEscores.mod2$sc.2.rfglm, wBCEscores.mod2$sc.2.rfrf, wBCEscores.mod2$glm, wBCEscores.mod2$rf)
+  value=c(wBCEscores.mod2$sb.rf, wBCEscores.mod2$sc.1.rfglm, wBCEscores.mod2$sc.1.rfrf, wBCEscores.mod2$sc.2.rfglm, wBCEscores.mod2$sc.2.rfrf, wBCEscores.mod2$glm, wBCEscores.mod2$rf)
 )
+
 
 
 
@@ -262,13 +279,14 @@ data.wbce.mod2 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod3 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod3 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
+
 
 
 wBCEscores.mod3 <- accuracies.mod3
@@ -276,7 +294,7 @@ wBCEscores.mod3 <- accuracies.mod3
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 3"))
   
   # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "nonlin")
@@ -284,6 +302,12 @@ for(sim in 1:n.sim){
   # extract generated datasets
   sample <- s$sample_train
   sample_test <- s$sample_test
+  
+  # predict on stable blanket with RF
+  output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(1,3)], probability = T)
+  pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(1,3)])$predictions[,"1"]
+  accuracies.mod3$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+  wBCEscores.mod3$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -325,18 +349,16 @@ for(sim in 1:n.sim){
 
 
 
-
 # create a dataframe
 data.acc.mod3 <- data.frame(
   name=name,
-  value=c(accuracies.mod3$sc.1.rfglm, accuracies.mod3$sc.1.rfrf, accuracies.mod3$sc.2.rfglm, accuracies.mod3$sc.2.rfrf, accuracies.mod3$glm, accuracies.mod3$rf)
+  value=c(accuracies.mod3$sb.rf, accuracies.mod3$sc.1.rfglm, accuracies.mod3$sc.1.rfrf, accuracies.mod3$sc.2.rfglm, accuracies.mod3$sc.2.rfrf, accuracies.mod3$glm, accuracies.mod3$rf)
 )
 
 data.wbce.mod3 <- data.frame(
   name=name,
-  value=c(wBCEscores.mod3$sc.1.rfglm, wBCEscores.mod3$sc.1.rfrf, wBCEscores.mod3$sc.2.rfglm, wBCEscores.mod3$sc.2.rfrf, wBCEscores.mod3$glm, wBCEscores.mod3$rf)
+  value=c(wBCEscores.mod3$sb.rf, wBCEscores.mod3$sc.1.rfglm, wBCEscores.mod3$sc.1.rfrf, wBCEscores.mod3$sc.2.rfglm, wBCEscores.mod3$sc.2.rfrf, wBCEscores.mod3$glm, wBCEscores.mod3$rf)
 )
-
 
 
 
@@ -356,13 +378,14 @@ data.wbce.mod3 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod4 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod4 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
+
 
 
 wBCEscores.mod4 <- accuracies.mod4
@@ -370,7 +393,7 @@ wBCEscores.mod4 <- accuracies.mod4
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 4"))
   
   # generate a sample of the standard SCM
   s <- gen.sample.fixed(n = n, n.test = n.test, int.strength.train = 1/2, int.strength.test = 4, mod = "bump")
@@ -378,6 +401,12 @@ for(sim in 1:n.sim){
   # extract generated datasets
   sample <- s$sample_train
   sample_test <- s$sample_test
+  
+  # predict on stable blanket with RF
+  output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(1,3)], probability = T)
+  pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(1,3)])$predictions[,"1"]
+  accuracies.mod4$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+  wBCEscores.mod4$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -419,16 +448,15 @@ for(sim in 1:n.sim){
 
 
 
-
 # create a dataframe
 data.acc.mod4 <- data.frame(
   name=name,
-  value=c(accuracies.mod4$sc.1.rfglm, accuracies.mod4$sc.1.rfrf, accuracies.mod4$sc.2.rfglm, accuracies.mod4$sc.2.rfrf, accuracies.mod4$glm, accuracies.mod4$rf)
+  value=c(accuracies.mod4$sb.rf, accuracies.mod4$sc.1.rfglm, accuracies.mod4$sc.1.rfrf, accuracies.mod4$sc.2.rfglm, accuracies.mod4$sc.2.rfrf, accuracies.mod4$glm, accuracies.mod4$rf)
 )
 
 data.wbce.mod4 <- data.frame(
   name=name,
-  value=c(wBCEscores.mod4$sc.1.rfglm, wBCEscores.mod4$sc.1.rfrf, wBCEscores.mod4$sc.2.rfglm, wBCEscores.mod4$sc.2.rfrf, wBCEscores.mod4$glm, wBCEscores.mod4$rf)
+  value=c(wBCEscores.mod4$sb.rf, wBCEscores.mod4$sc.1.rfglm, wBCEscores.mod4$sc.1.rfrf, wBCEscores.mod4$sc.2.rfglm, wBCEscores.mod4$sc.2.rfrf, wBCEscores.mod4$glm, wBCEscores.mod4$rf)
 )
 
 
@@ -448,7 +476,7 @@ save(data.acc.mod1,
      data.wbce.mod2,
      data.wbce.mod3,
      data.wbce.mod4,
-     file = file.path(script_dir, "saved_data/stabclass_standard.rdata"))
+     file = file.path(script_dir, "saved_data/stable_stabclass_standard.rdata"))
 
 
 
@@ -479,7 +507,7 @@ plt.acc.mod1 <- ggplot(data.acc.mod1, aes(x=name, y=value, fill=name)) +
   ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.acc.mod1
+#plt.acc.mod1
 
 
 plt.wbce.mod1 <- ggplot(data.wbce.mod1, aes(x=name, y=value, fill=name)) +
@@ -511,7 +539,7 @@ plt.acc.mod2 <- ggplot(data.acc.mod2, aes(x=name, y=value, fill=name)) +
   ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.acc.mod2
+#plt.acc.mod2
 
 
 plt.wbce.mod2 <- ggplot(data.wbce.mod2, aes(x=name, y=value, fill=name)) +
@@ -524,7 +552,7 @@ plt.wbce.mod2 <- ggplot(data.wbce.mod2, aes(x=name, y=value, fill=name)) +
   ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.wbce.mod2
+#plt.wbce.mod2
 
 
 
@@ -543,7 +571,7 @@ plt.acc.mod3 <- ggplot(data.acc.mod3, aes(x=name, y=value, fill=name)) +
   ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.acc.mod3
+#plt.acc.mod3
 
 
 plt.wbce.mod3 <- ggplot(data.wbce.mod3, aes(x=name, y=value, fill=name)) +
@@ -556,7 +584,7 @@ plt.wbce.mod3 <- ggplot(data.wbce.mod3, aes(x=name, y=value, fill=name)) +
   ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.wbce.mod3
+#plt.wbce.mod3
 
 
 
@@ -576,7 +604,7 @@ plt.acc.mod4 <- ggplot(data.acc.mod4, aes(x=name, y=value, fill=name)) +
   ylab("Accuracy") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.acc.mod4
+#plt.acc.mod4
 
 
 plt.wbce.mod4 <- ggplot(data.wbce.mod4, aes(x=name, y=value, fill=name)) +
@@ -589,7 +617,7 @@ plt.wbce.mod4 <- ggplot(data.wbce.mod4, aes(x=name, y=value, fill=name)) +
   ylab("Weighted BCE") +
   theme_bw(base_size = size) +
   theme(legend.position="none") 
-plt.wbce.mod4
+#plt.wbce.mod4
 
 
 
@@ -602,14 +630,14 @@ plt.wbce.mod4
 combined.acc <- plt.acc.mod1 + plt.acc.mod2 + plt.acc.mod3 + plt.acc.mod4 
 combined.acc
 
-ggsave(filename = file.path(script_dir, "saved_plots/stabclass_standard_acc.pdf"), width = 7, height = 7.5)
+ggsave(filename = file.path(script_dir, "saved_plots/stable_stabclass_standard_acc.pdf"), width = 7.5, height = 7.5)
 
 
 
 
 combined.wbce <- plt.wbce.mod1 + plt.wbce.mod2 + plt.wbce.mod3 + plt.wbce.mod4 
 combined.wbce
-ggsave(filename = file.path(script_dir, "saved_plots/stabclass_standard_wbce.pdf"), width = 7, height = 7.5)
+ggsave(filename = file.path(script_dir, "saved_plots/stable_stabclass_standard_wbce.pdf"), width = 7.5, height = 7.5)
 
 
 
@@ -621,7 +649,7 @@ ggsave(filename = file.path(script_dir, "saved_plots/stabclass_standard_wbce.pdf
 #-------------------------------------------------------------------------------
 
 # store the sessionInfo:
-writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/stabclass_standard.txt"))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/stable_stabclass_standard.txt"))
 
 
 

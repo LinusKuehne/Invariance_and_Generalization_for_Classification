@@ -48,8 +48,8 @@ c.pred <- function(Smax, sample, a.pred, B = 100, mod){
       }
     }
     
-    # compute the negative BCE score
-    s.pred.vec[b] <- nBCE(y = sample[-boot.ind, "Y"], y.hat = preds)
+    # compute the BCE score
+    s.pred.vec[b] <- BCE.weighted(y = sample[-boot.ind, "Y"], y.hat = preds)
     
   }
   
@@ -73,7 +73,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
   
   # store the fitted models in this list
   models.out <- list()
-  nBCE.scores <- numeric(length(sets.train))
+  BCE.scores <- numeric(length(sets.train))
   
   # train models.out
   for(s in 1:length(sets.train)){
@@ -88,7 +88,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
       pred <- rep(mean(sample$Y), nrow(sample))
       
       # compute score
-      nBCE.scores[s] <- nBCE(y = sample$Y, y.hat = pred)
+      BCE.scores[s] <- BCE.weighted(y = sample$Y, y.hat = pred)
       
     } else{
       
@@ -99,7 +99,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
         
         # compute score on OOB samples
         preds <- rf$predictions[,"1"]
-        nBCE.scores[s] <- nBCE(y = sample$Y, y.hat = preds)
+        BCE.scores[s] <- BCE.weighted(y = sample$Y, y.hat = preds)
       }
       
       if(mod == "GLM"){
@@ -143,7 +143,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
           pred <- rep(mean(samp.train$Y), length(test.ind))
           
           # compute score for this set and this fold
-          score.mat[k, s] <- nBCE(y = samp.test$Y, y.hat = pred)
+          score.mat[k, s] <- BCE.weighted(y = samp.test$Y, y.hat = pred)
           
         } else{
           x.strings <- paste0("X", set)
@@ -154,17 +154,17 @@ model.trainer <- function(sets.train, sample, mod, usage){
           pred <- predict(lr, newdata = samp.test[, set, drop = F], type = "response")
             
           # compute score for this set and this fold
-          score.mat[k, s] <- nBCE(y = samp.test$Y, y.hat = pred)
+          score.mat[k, s] <- BCE.weighted(y = samp.test$Y, y.hat = pred)
         }
       }
     }
     
     # average the scores over all folds
-    nBCE.scores <- colMeans(score.mat)
+    BCE.scores <- colMeans(score.mat)
   }
   
   
-  list.out <- list("models" = models.out, "nBCE.scores" = nBCE.scores)
+  list.out <- list("models" = models.out, "BCE.scores" = BCE.scores)
   
   return(list.out)
   
@@ -233,7 +233,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
   
   # fit models on all invariant sets and compute s.pred
   m <- model.trainer(sets.train = inv.sets, sample = sample, mod = mod.internal, usage = "train")
-  vec.s.pred <- m$nBCE.scores
+  vec.s.pred <- m$BCE.scores
   
   # find most predictive invariant model
   Smax.ind <- which.min(vec.s.pred)
@@ -262,7 +262,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
   if(mod.internal == mod.output){
     opt.models <- m$models[which(vec.s.pred < c)]
     
-    if(length(opt.sets) == 0){
+    if(length(opt.models) == 0){
       opt.models[[1]] <- m$models[[Smax.ind]]
     }
   } else{

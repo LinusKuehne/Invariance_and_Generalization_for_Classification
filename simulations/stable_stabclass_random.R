@@ -82,13 +82,13 @@ num.int <- 2
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod1 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod1 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
 
 
 wBCEscores.mod1 <- accuracies.mod1
@@ -101,7 +101,7 @@ MB.equal.SB.mod1 <- rep(T, n.sim)
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 1"))
   
   # generate a sample of the random SCM
   s <- generate.samples.random(n = n, n.test = n.test, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = strength.train, int.strength.test = strength.test, mod = "logreg")
@@ -120,6 +120,24 @@ for(sim in 1:n.sim){
   
   # are they the same?
   MB.equal.SB.mod1[sim] <- identical(SB.Y, MB.Y)
+  
+  
+
+  # predict on stable blanket with RF
+  
+  # stable blanket empty/non-empty
+  if(length(SB.Y) < 0.0001){
+    pred.sb.rf <- rep(mean(sample$Y), length(sample_test$Y))
+    accuracies.mod1$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod1$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  } else{
+    output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(SB.Y), drop = F], probability = T)
+    pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(SB.Y), drop = F])$predictions[,"1"]
+    accuracies.mod1$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod1$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+    
+  }
+  
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -169,8 +187,8 @@ wBCE.neq.mod1 <- wBCEscores.mod1[!MB.equal.SB.mod1, ]
 n.eq.mod1 <- sum(MB.equal.SB.mod1)
 n.neq.mod1 <- n.sim-n.eq.mod1
 
-name.eq.mod1 <- factor(c(rep("SC (a)",n.eq.mod1), rep("SC (b)",n.eq.mod1), rep("SC (c)",n.eq.mod1), rep("SC (d)",n.eq.mod1), rep("Log. Reg.",n.eq.mod1), rep("RF", n.eq.mod1)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-name.neq.mod1 <- factor(c(rep("SC (a)",n.neq.mod1), rep("SC (b)",n.neq.mod1), rep("SC (c)",n.neq.mod1), rep("SC (d)",n.neq.mod1), rep("Log. Reg.",n.neq.mod1), rep("RF", n.neq.mod1)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
+name.eq.mod1 <- factor(c(rep("SB(Y)",n.eq.mod1), rep("SC (a)",n.eq.mod1), rep("SC (b)",n.eq.mod1), rep("SC (c)",n.eq.mod1), rep("SC (d)",n.eq.mod1), rep("LR",n.eq.mod1), rep("RF", n.eq.mod1)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
+name.neq.mod1 <- factor(c(rep("SB(Y)",n.neq.mod1), rep("SC (a)",n.neq.mod1), rep("SC (b)",n.neq.mod1), rep("SC (c)",n.neq.mod1), rep("SC (d)",n.neq.mod1), rep("LR",n.neq.mod1), rep("RF", n.neq.mod1)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
 
 
 
@@ -179,23 +197,23 @@ name.neq.mod1 <- factor(c(rep("SC (a)",n.neq.mod1), rep("SC (b)",n.neq.mod1), re
 # create dataframes for plotting
 data.eq.acc.mod1 <- data.frame(
   name=name.eq.mod1,
-  value=c(acc.eq.mod1$sc.1.rfglm, acc.eq.mod1$sc.1.rfrf, acc.eq.mod1$sc.2.rfglm, acc.eq.mod1$sc.2.rfrf, acc.eq.mod1$glm, acc.eq.mod1$rf)
+  value=c(acc.eq.mod1$sb.rf, acc.eq.mod1$sc.1.rfglm, acc.eq.mod1$sc.1.rfrf, acc.eq.mod1$sc.2.rfglm, acc.eq.mod1$sc.2.rfrf, acc.eq.mod1$glm, acc.eq.mod1$rf)
 )
 
 data.neq.acc.mod1 <- data.frame(
   name=name.neq.mod1,
-  value=c(acc.neq.mod1$sc.1.rfglm, acc.neq.mod1$sc.1.rfrf, acc.neq.mod1$sc.2.rfglm, acc.neq.mod1$sc.2.rfrf, acc.neq.mod1$glm, acc.neq.mod1$rf)
+  value=c(acc.neq.mod1$sb.rf, acc.neq.mod1$sc.1.rfglm, acc.neq.mod1$sc.1.rfrf, acc.neq.mod1$sc.2.rfglm, acc.neq.mod1$sc.2.rfrf, acc.neq.mod1$glm, acc.neq.mod1$rf)
 )
 
 
 data.eq.wbce.mod1 <- data.frame(
   name=name.eq.mod1,
-  value=c(wBCE.eq.mod1$sc.1.rfglm, wBCE.eq.mod1$sc.1.rfrf, wBCE.eq.mod1$sc.2.rfglm, wBCE.eq.mod1$sc.2.rfrf, wBCE.eq.mod1$glm, wBCE.eq.mod1$rf)
+  value=c(wBCE.eq.mod1$sb.rf, wBCE.eq.mod1$sc.1.rfglm, wBCE.eq.mod1$sc.1.rfrf, wBCE.eq.mod1$sc.2.rfglm, wBCE.eq.mod1$sc.2.rfrf, wBCE.eq.mod1$glm, wBCE.eq.mod1$rf)
 )
 
 data.neq.wbce.mod1 <- data.frame(
   name=name.neq.mod1,
-  value=c(wBCE.neq.mod1$sc.1.rfglm, wBCE.neq.mod1$sc.1.rfrf, wBCE.neq.mod1$sc.2.rfglm, wBCE.neq.mod1$sc.2.rfrf, wBCE.neq.mod1$glm, wBCE.neq.mod1$rf)
+  value=c(wBCE.neq.mod1$sb.rf, wBCE.neq.mod1$sc.1.rfglm, wBCE.neq.mod1$sc.1.rfrf, wBCE.neq.mod1$sc.2.rfglm, wBCE.neq.mod1$sc.2.rfrf, wBCE.neq.mod1$glm, wBCE.neq.mod1$rf)
 )
 
 
@@ -225,13 +243,13 @@ data.neq.wbce.mod1 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod2 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod2 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
 
 
 wBCEscores.mod2 <- accuracies.mod2
@@ -243,7 +261,7 @@ MB.equal.SB.mod2 <- rep(T, n.sim)
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 2"))
   
   # generate a sample of the random SCM
   s <- generate.samples.random(n = n, n.test = n.test, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = strength.train, int.strength.test = strength.test, mod = "probit")
@@ -262,6 +280,21 @@ for(sim in 1:n.sim){
   
   # are they the same?
   MB.equal.SB.mod2[sim] <- identical(SB.Y, MB.Y)
+  
+  
+  # predict on stable blanket with RF
+  
+  # stable blanket empty/non-empty
+  if(length(SB.Y) < 0.0001){
+    pred.sb.rf <- rep(mean(sample$Y), length(sample_test$Y))
+    accuracies.mod2$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod2$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  } else{
+    output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(SB.Y), drop = F], probability = T)
+    pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(SB.Y), drop = F])$predictions[,"1"]
+    accuracies.mod2$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod2$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  }
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -311,9 +344,8 @@ wBCE.neq.mod2 <- wBCEscores.mod2[!MB.equal.SB.mod2, ]
 n.eq.mod2 <- sum(MB.equal.SB.mod2)
 n.neq.mod2 <- n.sim-n.eq.mod2
 
-name.eq.mod2 <- factor(c(rep("SC (a)",n.eq.mod2), rep("SC (b)",n.eq.mod2), rep("SC (c)",n.eq.mod2), rep("SC (d)",n.eq.mod2), rep("Log. Reg.",n.eq.mod2), rep("RF", n.eq.mod2)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-name.neq.mod2 <- factor(c(rep("SC (a)",n.neq.mod2), rep("SC (b)",n.neq.mod2), rep("SC (c)",n.neq.mod2), rep("SC (d)",n.neq.mod2), rep("Log. Reg.",n.neq.mod2), rep("RF", n.neq.mod2)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-
+name.eq.mod2 <- factor(c(rep("SB(Y)",n.eq.mod2), rep("SC (a)",n.eq.mod2), rep("SC (b)",n.eq.mod2), rep("SC (c)",n.eq.mod2), rep("SC (d)",n.eq.mod2), rep("LR",n.eq.mod2), rep("RF", n.eq.mod2)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
+name.neq.mod2 <- factor(c(rep("SB(Y)",n.neq.mod2), rep("SC (a)",n.neq.mod2), rep("SC (b)",n.neq.mod2), rep("SC (c)",n.neq.mod2), rep("SC (d)",n.neq.mod2), rep("LR",n.neq.mod2), rep("RF", n.neq.mod2)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
 
 
 
@@ -322,23 +354,23 @@ name.neq.mod2 <- factor(c(rep("SC (a)",n.neq.mod2), rep("SC (b)",n.neq.mod2), re
 # create dataframes for plotting
 data.eq.acc.mod2 <- data.frame(
   name=name.eq.mod2,
-  value=c(acc.eq.mod2$sc.1.rfglm, acc.eq.mod2$sc.1.rfrf, acc.eq.mod2$sc.2.rfglm, acc.eq.mod2$sc.2.rfrf, acc.eq.mod2$glm, acc.eq.mod2$rf)
+  value=c(acc.eq.mod2$sb.rf, acc.eq.mod2$sc.1.rfglm, acc.eq.mod2$sc.1.rfrf, acc.eq.mod2$sc.2.rfglm, acc.eq.mod2$sc.2.rfrf, acc.eq.mod2$glm, acc.eq.mod2$rf)
 )
 
 data.neq.acc.mod2 <- data.frame(
   name=name.neq.mod2,
-  value=c(acc.neq.mod2$sc.1.rfglm, acc.neq.mod2$sc.1.rfrf, acc.neq.mod2$sc.2.rfglm, acc.neq.mod2$sc.2.rfrf, acc.neq.mod2$glm, acc.neq.mod2$rf)
+  value=c(acc.neq.mod2$sb.rf, acc.neq.mod2$sc.1.rfglm, acc.neq.mod2$sc.1.rfrf, acc.neq.mod2$sc.2.rfglm, acc.neq.mod2$sc.2.rfrf, acc.neq.mod2$glm, acc.neq.mod2$rf)
 )
 
 
 data.eq.wbce.mod2 <- data.frame(
   name=name.eq.mod2,
-  value=c(wBCE.eq.mod2$sc.1.rfglm, wBCE.eq.mod2$sc.1.rfrf, wBCE.eq.mod2$sc.2.rfglm, wBCE.eq.mod2$sc.2.rfrf, wBCE.eq.mod2$glm, wBCE.eq.mod2$rf)
+  value=c(wBCE.eq.mod2$sb.rf, wBCE.eq.mod2$sc.1.rfglm, wBCE.eq.mod2$sc.1.rfrf, wBCE.eq.mod2$sc.2.rfglm, wBCE.eq.mod2$sc.2.rfrf, wBCE.eq.mod2$glm, wBCE.eq.mod2$rf)
 )
 
 data.neq.wbce.mod2 <- data.frame(
   name=name.neq.mod2,
-  value=c(wBCE.neq.mod2$sc.1.rfglm, wBCE.neq.mod2$sc.1.rfrf, wBCE.neq.mod2$sc.2.rfglm, wBCE.neq.mod2$sc.2.rfrf, wBCE.neq.mod2$glm, wBCE.neq.mod2$rf)
+  value=c(wBCE.neq.mod2$sb.rf, wBCE.neq.mod2$sc.1.rfglm, wBCE.neq.mod2$sc.1.rfrf, wBCE.neq.mod2$sc.2.rfglm, wBCE.neq.mod2$sc.2.rfrf, wBCE.neq.mod2$glm, wBCE.neq.mod2$rf)
 )
 
 
@@ -361,14 +393,13 @@ data.neq.wbce.mod2 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod3 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod3 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
-
+                              rf = numeric(n.sim))
 
 wBCEscores.mod3 <- accuracies.mod3
 
@@ -379,7 +410,7 @@ MB.equal.SB.mod3 <- rep(T, n.sim)
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 3"))
   
   # generate a sample of the random SCM
   s <- generate.samples.random(n = n, n.test = n.test, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = strength.train, int.strength.test = strength.test, mod = "nonlin")
@@ -398,6 +429,20 @@ for(sim in 1:n.sim){
   
   # are they the same?
   MB.equal.SB.mod3[sim] <- identical(SB.Y, MB.Y)
+  
+  # predict on stable blanket with RF
+  
+  # stable blanket empty/non-empty
+  if(length(SB.Y) < 0.0001){
+    pred.sb.rf <- rep(mean(sample$Y), length(sample_test$Y))
+    accuracies.mod3$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod3$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  } else{
+    output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(SB.Y), drop = F], probability = T)
+    pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(SB.Y), drop = F])$predictions[,"1"]
+    accuracies.mod3$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod3$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  }
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -447,9 +492,8 @@ wBCE.neq.mod3 <- wBCEscores.mod3[!MB.equal.SB.mod3, ]
 n.eq.mod3 <- sum(MB.equal.SB.mod3)
 n.neq.mod3 <- n.sim-n.eq.mod3
 
-name.eq.mod3 <- factor(c(rep("SC (a)",n.eq.mod3), rep("SC (b)",n.eq.mod3), rep("SC (c)",n.eq.mod3), rep("SC (d)",n.eq.mod3), rep("Log. Reg.",n.eq.mod3), rep("RF", n.eq.mod3)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-name.neq.mod3 <- factor(c(rep("SC (a)",n.neq.mod3), rep("SC (b)",n.neq.mod3), rep("SC (c)",n.neq.mod3), rep("SC (d)",n.neq.mod3), rep("Log. Reg.",n.neq.mod3), rep("RF", n.neq.mod3)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-
+name.eq.mod3 <- factor(c(rep("SB(Y)",n.eq.mod3), rep("SC (a)",n.eq.mod3), rep("SC (b)",n.eq.mod3), rep("SC (c)",n.eq.mod3), rep("SC (d)",n.eq.mod3), rep("LR",n.eq.mod3), rep("RF", n.eq.mod3)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
+name.neq.mod3 <- factor(c(rep("SB(Y)",n.neq.mod3), rep("SC (a)",n.neq.mod3), rep("SC (b)",n.neq.mod3), rep("SC (c)",n.neq.mod3), rep("SC (d)",n.neq.mod3), rep("LR",n.neq.mod3), rep("RF", n.neq.mod3)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
 
 
 
@@ -458,24 +502,25 @@ name.neq.mod3 <- factor(c(rep("SC (a)",n.neq.mod3), rep("SC (b)",n.neq.mod3), re
 # create dataframes for plotting
 data.eq.acc.mod3 <- data.frame(
   name=name.eq.mod3,
-  value=c(acc.eq.mod3$sc.1.rfglm, acc.eq.mod3$sc.1.rfrf, acc.eq.mod3$sc.2.rfglm, acc.eq.mod3$sc.2.rfrf, acc.eq.mod3$glm, acc.eq.mod3$rf)
+  value=c(acc.eq.mod3$sb.rf, acc.eq.mod3$sc.1.rfglm, acc.eq.mod3$sc.1.rfrf, acc.eq.mod3$sc.2.rfglm, acc.eq.mod3$sc.2.rfrf, acc.eq.mod3$glm, acc.eq.mod3$rf)
 )
 
 data.neq.acc.mod3 <- data.frame(
   name=name.neq.mod3,
-  value=c(acc.neq.mod3$sc.1.rfglm, acc.neq.mod3$sc.1.rfrf, acc.neq.mod3$sc.2.rfglm, acc.neq.mod3$sc.2.rfrf, acc.neq.mod3$glm, acc.neq.mod3$rf)
+  value=c(acc.neq.mod3$sb.rf, acc.neq.mod3$sc.1.rfglm, acc.neq.mod3$sc.1.rfrf, acc.neq.mod3$sc.2.rfglm, acc.neq.mod3$sc.2.rfrf, acc.neq.mod3$glm, acc.neq.mod3$rf)
 )
 
 
 data.eq.wbce.mod3 <- data.frame(
   name=name.eq.mod3,
-  value=c(wBCE.eq.mod3$sc.1.rfglm, wBCE.eq.mod3$sc.1.rfrf, wBCE.eq.mod3$sc.2.rfglm, wBCE.eq.mod3$sc.2.rfrf, wBCE.eq.mod3$glm, wBCE.eq.mod3$rf)
+  value=c(wBCE.eq.mod3$sb.rf, wBCE.eq.mod3$sc.1.rfglm, wBCE.eq.mod3$sc.1.rfrf, wBCE.eq.mod3$sc.2.rfglm, wBCE.eq.mod3$sc.2.rfrf, wBCE.eq.mod3$glm, wBCE.eq.mod3$rf)
 )
 
 data.neq.wbce.mod3 <- data.frame(
   name=name.neq.mod3,
-  value=c(wBCE.neq.mod3$sc.1.rfglm, wBCE.neq.mod3$sc.1.rfrf, wBCE.neq.mod3$sc.2.rfglm, wBCE.neq.mod3$sc.2.rfrf, wBCE.neq.mod3$glm, wBCE.neq.mod3$rf)
+  value=c(wBCE.neq.mod3$sb.rf, wBCE.neq.mod3$sc.1.rfglm, wBCE.neq.mod3$sc.1.rfrf, wBCE.neq.mod3$sc.2.rfglm, wBCE.neq.mod3$sc.2.rfrf, wBCE.neq.mod3$glm, wBCE.neq.mod3$rf)
 )
+
 
 
 
@@ -498,13 +543,13 @@ data.neq.wbce.mod3 <- data.frame(
 set.seed(1)
 
 # accuracies of the models
-accuracies.mod4 <- data.frame(sc.1.rfglm = numeric(n.sim),
+accuracies.mod4 <- data.frame(sb.rf = numeric(n.sim),
+                              sc.1.rfglm = numeric(n.sim),
                               sc.1.rfrf = numeric(n.sim),
                               sc.2.rfglm = numeric(n.sim),
                               sc.2.rfrf = numeric(n.sim),
                               glm = numeric(n.sim),
-                              rf = numeric(n.sim)
-)
+                              rf = numeric(n.sim))
 
 
 wBCEscores.mod4 <- accuracies.mod4
@@ -518,7 +563,7 @@ MB.equal.SB.mod4 <- rep(T, n.sim)
 
 
 for(sim in 1:n.sim){
-  print(paste0("Simulation iteration ",sim, " out of ", n.sim))
+  print(paste0("Simulation iteration ", sim, " out of ", n.sim, " for model 4"))
   
   # generate a sample of the random SCM
   s <- generate.samples.random(n = n, n.test = n.test, d = d, max.pa = max.pa, num.int = num.int, int.strength.train = strength.train, int.strength.test = strength.test, mod = "bump")
@@ -537,6 +582,20 @@ for(sim in 1:n.sim){
   
   # are they the same?
   MB.equal.SB.mod4[sim] <- identical(SB.Y, MB.Y)
+  
+  # predict on stable blanket with RF
+  
+  # stable blanket empty/non-empty
+  if(length(SB.Y) < 0.0001){
+    pred.sb.rf <- rep(mean(sample$Y), length(sample_test$Y))
+    accuracies.mod4$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod4$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  } else{
+    output.sb.rf <- ranger(y = as.factor(sample$Y), x = sample[, c(SB.Y), drop = F], probability = T)
+    pred.sb.rf <- predict(output.sb.rf, data = sample_test[, c(SB.Y), drop = F])$predictions[,"1"]
+    accuracies.mod4$sb.rf[sim] <- mean(sample_test$Y == ifelse(pred.sb.rf>0.5, 1, 0))
+    wBCEscores.mod4$sb.rf[sim] <- BCE.weighted(y = sample_test$Y, y.hat = pred.sb.rf)
+  }
   
   # stabilized classification with test 1 (RF, GLM)
   output.sc.1.rfglm <- stabilizedClassification(sample = sample, test = test.1, mod.internal = "RF", mod.output = "GLM", B = B, verbose = F)
@@ -577,6 +636,7 @@ for(sim in 1:n.sim){
 
 
 
+
 # separate data depending on whether is was generated for a DAG with SB(Y) == MB(Y) or SB(Y) != MB(Y)
 acc.eq.mod4 <- accuracies.mod4[MB.equal.SB.mod4, ]
 acc.neq.mod4 <- accuracies.mod4[!MB.equal.SB.mod4, ]
@@ -587,9 +647,8 @@ wBCE.neq.mod4 <- wBCEscores.mod4[!MB.equal.SB.mod4, ]
 n.eq.mod4 <- sum(MB.equal.SB.mod4)
 n.neq.mod4 <- n.sim-n.eq.mod4
 
-name.eq.mod4 <- factor(c(rep("SC (a)",n.eq.mod4), rep("SC (b)",n.eq.mod4), rep("SC (c)",n.eq.mod4), rep("SC (d)",n.eq.mod4), rep("Log. Reg.",n.eq.mod4), rep("RF", n.eq.mod4)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-name.neq.mod4 <- factor(c(rep("SC (a)",n.neq.mod4), rep("SC (b)",n.neq.mod4), rep("SC (c)",n.neq.mod4), rep("SC (d)",n.neq.mod4), rep("Log. Reg.",n.neq.mod4), rep("RF", n.neq.mod4)), levels = c("SC (a)", "SC (b)", "SC (c)", "SC (d)", "Log. Reg.", "RF"))
-
+name.eq.mod4 <- factor(c(rep("SB(Y)",n.eq.mod4), rep("SC (a)",n.eq.mod4), rep("SC (b)",n.eq.mod4), rep("SC (c)",n.eq.mod4), rep("SC (d)",n.eq.mod4), rep("LR",n.eq.mod4), rep("RF", n.eq.mod4)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
+name.neq.mod4 <- factor(c(rep("SB(Y)",n.neq.mod4), rep("SC (a)",n.neq.mod4), rep("SC (b)",n.neq.mod4), rep("SC (c)",n.neq.mod4), rep("SC (d)",n.neq.mod4), rep("LR",n.neq.mod4), rep("RF", n.neq.mod4)), levels = c("SB(Y)", "SC (a)", "SC (b)", "SC (c)", "SC (d)", "LR", "RF"))
 
 
 
@@ -598,24 +657,25 @@ name.neq.mod4 <- factor(c(rep("SC (a)",n.neq.mod4), rep("SC (b)",n.neq.mod4), re
 # create dataframes for plotting
 data.eq.acc.mod4 <- data.frame(
   name=name.eq.mod4,
-  value=c(acc.eq.mod4$sc.1.rfglm, acc.eq.mod4$sc.1.rfrf, acc.eq.mod4$sc.2.rfglm, acc.eq.mod4$sc.2.rfrf, acc.eq.mod4$glm, acc.eq.mod4$rf)
+  value=c(acc.eq.mod4$sb.rf, acc.eq.mod4$sc.1.rfglm, acc.eq.mod4$sc.1.rfrf, acc.eq.mod4$sc.2.rfglm, acc.eq.mod4$sc.2.rfrf, acc.eq.mod4$glm, acc.eq.mod4$rf)
 )
 
 data.neq.acc.mod4 <- data.frame(
   name=name.neq.mod4,
-  value=c(acc.neq.mod4$sc.1.rfglm, acc.neq.mod4$sc.1.rfrf, acc.neq.mod4$sc.2.rfglm, acc.neq.mod4$sc.2.rfrf, acc.neq.mod4$glm, acc.neq.mod4$rf)
+  value=c(acc.neq.mod4$sb.rf, acc.neq.mod4$sc.1.rfglm, acc.neq.mod4$sc.1.rfrf, acc.neq.mod4$sc.2.rfglm, acc.neq.mod4$sc.2.rfrf, acc.neq.mod4$glm, acc.neq.mod4$rf)
 )
 
 
 data.eq.wbce.mod4 <- data.frame(
   name=name.eq.mod4,
-  value=c(wBCE.eq.mod4$sc.1.rfglm, wBCE.eq.mod4$sc.1.rfrf, wBCE.eq.mod4$sc.2.rfglm, wBCE.eq.mod4$sc.2.rfrf, wBCE.eq.mod4$glm, wBCE.eq.mod4$rf)
+  value=c(wBCE.eq.mod4$sb.rf, wBCE.eq.mod4$sc.1.rfglm, wBCE.eq.mod4$sc.1.rfrf, wBCE.eq.mod4$sc.2.rfglm, wBCE.eq.mod4$sc.2.rfrf, wBCE.eq.mod4$glm, wBCE.eq.mod4$rf)
 )
 
 data.neq.wbce.mod4 <- data.frame(
   name=name.neq.mod4,
-  value=c(wBCE.neq.mod4$sc.1.rfglm, wBCE.neq.mod4$sc.1.rfrf, wBCE.neq.mod4$sc.2.rfglm, wBCE.neq.mod4$sc.2.rfrf, wBCE.neq.mod4$glm, wBCE.neq.mod4$rf)
+  value=c(wBCE.neq.mod4$sb.rf, wBCE.neq.mod4$sc.1.rfglm, wBCE.neq.mod4$sc.1.rfrf, wBCE.neq.mod4$sc.2.rfglm, wBCE.neq.mod4$sc.2.rfrf, wBCE.neq.mod4$glm, wBCE.neq.mod4$rf)
 )
+
 
 
 
@@ -636,7 +696,7 @@ save(accuracies.mod1,
      MB.equal.SB.mod2,
      MB.equal.SB.mod3,
      MB.equal.SB.mod4,
-     file = file.path(script_dir, "saved_data/stabclass_random.rdata"))
+     file = file.path(script_dir, "saved_data/stable_stabclass_random.rdata"))
 
 
 
@@ -960,12 +1020,12 @@ plt.neq.wbce.mod4 <- ggplot(data.neq.wbce.mod4, aes(x=name, y=value, fill=name))
 
 combined.acc <- plt.eq.acc.mod1 + plt.neq.acc.mod1 + plt.eq.acc.mod2 + plt.neq.acc.mod2 + plt.eq.acc.mod3 + plt.neq.acc.mod3 + plt.eq.acc.mod4 + plt.neq.acc.mod4 + plot_layout(ncol = 2, nrow = 4)
 combined.acc
-ggsave(filename = file.path(script_dir, "saved_plots/stabclass_random_acc.pdf"), width = 8, height = 10)
+ggsave(filename = file.path(script_dir, "saved_plots/stable_stabclass_random_acc.pdf"), width = 8, height = 10)
 
 
 combined.wbce <- plt.eq.wbce.mod1 + plt.neq.wbce.mod1 + plt.eq.wbce.mod2 + plt.neq.wbce.mod2 + plt.eq.wbce.mod3 + plt.neq.wbce.mod3 + plt.eq.wbce.mod4 + plt.neq.wbce.mod4 + plot_layout(ncol = 2, nrow = 4)
 combined.wbce
-ggsave(filename = file.path(script_dir, "saved_plots/stabclass_random_wbce.pdf"), width = 8, height = 10)
+ggsave(filename = file.path(script_dir, "saved_plots/stable_stabclass_random_wbce.pdf"), width = 8, height = 10)
 
 
 
@@ -977,7 +1037,7 @@ ggsave(filename = file.path(script_dir, "saved_plots/stabclass_random_wbce.pdf")
 #-------------------------------------------------------------------------------
 
 # store the sessionInfo:
-writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/stabclass_random.txt"))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/stable_stabclass_random.txt"))
 
 
 
