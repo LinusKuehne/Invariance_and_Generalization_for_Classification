@@ -491,6 +491,7 @@ save(data.acc.mod1,
 min.wbce <- -0.1 + min(min(data.wbce.mod1$value), min(data.wbce.mod2$value), min(data.wbce.mod3$value), min(data.wbce.mod4$value))
 max.wbce <- 0.1 + max(max(data.wbce.mod1$value), max(data.wbce.mod2$value), max(data.wbce.mod3$value), max(data.wbce.mod4$value))
 
+max.wbce <- 2
 
 size <- 10
 
