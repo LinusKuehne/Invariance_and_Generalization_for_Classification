@@ -14,7 +14,7 @@ script_dir <- getwd()
 
 
 # load in the dataset
-load(file.path(script_dir, "../data/exported_pyrocb.rdata"))
+load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 
 
 # insert authentification key for stadiamaps 
@@ -203,7 +203,7 @@ g <- ggarrange(p_am+ theme(legend.title = element_blank()), p_aus+ theme(legend.
 
 #g
 
-ggsave(filename = file.path(script_dir, "/saved_plots/map9.pdf"), width = 8, height = 5.5)
+ggsave(filename = file.path(script_dir, "../saved_plots/map9.pdf"), width = 8, height = 5.5)
 
  #-------------------------------------------------------------------------------
 
@@ -324,21 +324,21 @@ g <- ggarrange(p_am+ theme(legend.title = element_blank()), p_aus+ theme(legend.
 #g
 
 
-ggsave(filename = file.path(script_dir, "/saved_plots/map5.pdf"), width = 8, height = 5.5)
+ggsave(filename = file.path(script_dir, "../saved_plots/map5.pdf"), width = 8, height = 5.5)
 
 #-------------------------------------------------------------------------------
 
 
 
 # store the environments
-save(env5, env9, file = file.path(script_dir, "../data/discrete_envs.rdata"))
+save(env5, env9, file = file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
 
 
 
 
-writeLines(capture.output(sessionInfo()), file.path(script_dir, "sessionInfo/create_environments.txt"))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "../sessionInfo/create_environments.txt"))
 
 
 
