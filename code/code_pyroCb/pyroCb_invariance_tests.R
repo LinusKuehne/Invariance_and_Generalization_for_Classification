@@ -1,6 +1,6 @@
 
 # calculate out-of-sample prob. of pyrocb occurrence for given cluster using RF trained on all other clusters
-cluster.probs.rf <- function(data, labels, envVar, cluster.assoc, cluster){
+cluster.probs <- function(data, labels, envVar, cluster.assoc, cluster){
   
   indx_val <- which(cluster.assoc == cluster)
   indx_train <- -indx_val
@@ -32,12 +32,15 @@ cluster.probs.rf <- function(data, labels, envVar, cluster.assoc, cluster){
   
   
   
-  rf <- ranger(y = y_train, x = X_train, probability = T, class.weights = weights)
+  rf <- ranger(y = y_train, x = X_train, probability = T, class.weights = weights, num.trees = 200, max.depth = 20)
   
   y_pred <- predict(rf, data = X_val)$predictions[,"1"]
   
   return(y_pred)
 }
+
+
+
 
 
 
@@ -65,7 +68,7 @@ cluster.probs.env <- function(data, envs, cluster.assoc, cluster){
   
   weights <- length(env_train)/(length(levels(envs))*table_env)  # 1/length(levels(envs)) times inverse of class frequency 
   
-  rf <- ranger(y = env_train, x = X_train, probability = T, class.weights = weights)
+  rf <- ranger(y = env_train, x = X_train, probability = T, class.weights = weights, num.trees = 200, max.depth = 20)
   
   env_pred <- predict(rf, data = X_val)$predictions
   
@@ -131,7 +134,7 @@ get.probs.env <- function(set, cube, envs, cluster.assoc, posts){
 
 
 # wrapper function which calculates out-of-sample prob. of pyrocb occurrence by calling cluster.probs for each cluster
-get.probs <- function(set, cube, labels, envVar = NULL, cluster.assoc, posts, model = "RF"){
+get.probs <- function(set, cube, labels, envVar = NULL, cluster.assoc, posts){
   
   dat <- NA
 
@@ -151,20 +154,15 @@ get.probs <- function(set, cube, labels, envVar = NULL, cluster.assoc, posts, mo
   y_pred <- rep(-1, nrow(cube))
   
   
-  
-  cluster.probs.mod <- cluster.probs.rf
-  
-  if(model == "GLM"){
-    cluster.probs.mod <- cluster.probs.glm
-  }
+
   
   for(clust in clusts){
     #print(paste0("Cluster ", clust))
-    y_pred_clust <- cluster.probs.mod(data = dat, 
-                                      labels = labels, 
-                                      envVar = envVar,
-                                      cluster.assoc = cluster.assoc, 
-                                      cluster = clust)
+    y_pred_clust <- cluster.probs(data = dat, 
+                                  labels = labels, 
+                                  envVar = envVar,
+                                  cluster.assoc = cluster.assoc, 
+                                  cluster = clust)
     
     indclust <- which(cluster.assoc == clust)
     
@@ -179,6 +177,10 @@ get.probs <- function(set, cube, labels, envVar = NULL, cluster.assoc, posts, mo
   return(y_pred)
   
 }
+
+
+
+
 
 
 
@@ -232,8 +234,8 @@ delong <- function(set, cube, labels, envVar, cluster.assoc, posts){
   # permuted indeces for y_pred_noE
   perm <- sample(1:nrow(envVar), size = nrow(envVar), replace = F)
   
-  y_pred_noE <- get.probs(set, cube, labels, envVar = envVar[perm, , drop = F], cluster.assoc, posts, model = "RF")
-  y_pred_E <- get.probs(set, cube, labels, envVar = envVar, cluster.assoc, posts, model = "RF")
+  y_pred_noE <- get.probs(set, cube, labels, envVar = envVar[perm, , drop = F], cluster.assoc, posts)
+  y_pred_E <- get.probs(set, cube, labels, envVar = envVar, cluster.assoc, posts)
   
   res <- delong.test(y_pred_noE, y_pred_E, labels)
   
@@ -247,10 +249,14 @@ delong <- function(set, cube, labels, envVar, cluster.assoc, posts){
 
 
 
-inv.res.dist <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts){
+
+
+
+
+residual <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts){
   
 
-  probs <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts, model = "RF")
+  probs <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts)
   
   res.y.rf <- y.num - probs
   
@@ -274,13 +280,137 @@ inv.res.dist <- function(set, cube, labels, y.num, group5, group9, cluster.assoc
 
 
 
+corr <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts){
+  
+  print("regress Y...")
+  probs <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts)
+  
+  res.y.rf <- y.num - probs
+  
+  
+  
+  indicator.matrix.5 <- matrix(0, nrow = nrow(cube), ncol = length(levels(group5)))
+  
+  for(j in 1:nrow(cube)){
+    indicator.matrix.5[j,] <- as.numeric(levels(group5) == group5[j])
+  }
+  
+  indicator.matrix.9 <- matrix(0, nrow = nrow(cube), ncol = length(levels(group9)))
+  
+  for(j in 1:nrow(cube)){
+    indicator.matrix.9[j,] <- as.numeric(levels(group9) == group9[j])
+  }
+  
+  print("regress env5...")
+  env.res.5 <- get.probs.env(set, cube, group5, cluster.assoc, posts)
+  
+  print("regress env9...")
+  env.res.9 <- get.probs.env(set, cube, group9, cluster.assoc, posts)
+  
+  
+  e.res.mat.5 <- indicator.matrix.5 - env.res.5
+  e.res.mat.9 <- indicator.matrix.9 - env.res.9
+  
+  
+  
+  
+  pvals.vec.5 <- numeric(ncol(e.res.mat.5))
+  
+  print("corr test 5")
+  for(l in 1:length(pvals.vec.5)){
+    
+    e.res.5 <- e.res.mat.5[,l]
+    test.5 <- cor.test(res.y.rf, e.res.5)
+    pvals.vec.5[l] <- test.5$p.value
+  }
+  
+  p.value.5 <- min(length(pvals.vec.5)*min(pvals.vec.5),1)
+  
+  
+  
+  
+  
+  pvals.vec.9 <- numeric(ncol(e.res.mat.9))
+  
+  print("corr test 9")
+  for(l in 1:length(pvals.vec.9)){
+    
+    e.res.9 <- e.res.mat.9[,l]
+    test.9 <- cor.test(res.y.rf, e.res.9)
+    pvals.vec.9[l] <- test.9$p.value
+  }
+  
+  p.value.9 <- min(length(pvals.vec.9)*min(pvals.vec.9),1)
+  
+
+  ret.list <- list("p.val_fiveEnv" = p.value.5, "p.val_nineEnv" = p.value.9)
+  
+  return(ret.list)
+  
+}
+
+
+
+
+
+
+corr.single <- function(set, cube, labels, y.num, env_test, cluster.assoc, posts){
+  
+  probs <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts)
+  
+  res.y.rf <- y.num - probs
+  
+  
+  
+  indicator.matrix <- matrix(0, nrow = nrow(cube), ncol = length(levels(env_test)))
+  
+  for(j in 1:nrow(cube)){
+    indicator.matrix[j,] <- as.numeric(levels(env_test) == env_test[j])
+  }
+  
+  
+  
+  env.res <- get.probs.env(set, cube, env_test, cluster.assoc, posts)
+  
+  
+  
+  e.res.mat <- indicator.matrix - env.res
+
+  
+  
+  
+  pvals.vec <- numeric(ncol(e.res.mat))
+  
+  for(l in 1:length(pvals.vec)){
+    
+    e.res <- e.res.mat[,l]
+    test <- cor.test(res.y.rf, e.res)
+    pvals.vec[l] <- test$p.value
+  }
+  
+  p.value <- min(length(pvals.vec)*min(pvals.vec),1)
+  
+  
+  
+
+  
+  
+
+  return(p.value)
+  
+}
+
+
+
+
+
 
 
 
 
 rangerICP.paper <- function(set, cube, labels, y.num, envs, cluster.assoc, posts){
   
-  probs.y <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts, model = "RF")
+  probs.y <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts)
   
   r <- matrix(y.num - probs.y, ncol = 1)
   
@@ -316,9 +446,6 @@ rangerICP.paper <- function(set, cube, labels, y.num, envs, cluster.assoc, posts
   
   return(p.value)
 }
-
-
-
 
 
 
