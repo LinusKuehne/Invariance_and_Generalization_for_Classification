@@ -2,7 +2,7 @@
 
 
 # tuning parameter
-top.n <- 5
+top.n <- 25
 
 
 
