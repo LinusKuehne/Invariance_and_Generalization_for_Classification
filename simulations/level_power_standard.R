@@ -141,7 +141,7 @@ p.mod1 <- ggplot(points.mod1, aes(x = x, y = y, group = group)) +
   labs(
     shape = "Invariant subset",
     color = "Invariance test",
-    x = "Average rejection rate of invariant S",    
+    x = "Rejection rate of invariant S",    
     y = "Average Jaccard index",   
     title = "Logistic Regression Model"  
   ) +
@@ -256,7 +256,7 @@ p.mod2 <- ggplot(points.mod2, aes(x = x, y = y, group = group)) +
   labs(
     shape = "Invariant subset",
     color = "Invariance test",
-    x = "Average rejection rate of invariant S",    
+    x = "Rejection rate of invariant S",    
     y = "Average Jaccard index",   
     title = "Probit Regression Model"  
   ) +
@@ -375,7 +375,7 @@ p.mod3 <- ggplot(points.mod3, aes(x = x, y = y, group = group)) +
   labs(
     shape = "Invariant subset",
     color = "Invariance test",
-    x = "Average rejection rate of invariant S",    
+    x = "Rejection rate of invariant S",    
     y = "Average Jaccard index",   
     title = "Non-Linear Logistic Regression Model"  
   ) +
@@ -493,7 +493,7 @@ p.mod4 <- ggplot(points.mod4, aes(x = x, y = y, group = group)) +
   labs(
     shape = "Invariant subset",
     color = "Invariance test",
-    x = "Average rejection rate of invariant S",    
+    x = "Rejection rate of invariant S",    
     y = "Average Jaccard index",   
     title = "Bump Model"  
   ) +
@@ -530,7 +530,7 @@ combined_plot <- combined + plot_layout(guides = "collect") &
   )
 
 
-combined_plot
+#combined_plot
 
 
 ggsave(filename = file.path(script_dir, "saved_plots/level_power_standard.pdf"), width = 7, height = 7.5)

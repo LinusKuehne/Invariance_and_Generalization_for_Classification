@@ -230,7 +230,7 @@ p.FWER.int <- ggplot(df.plot.FWER.int, aes(intervention.strength, value)) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
   xlab("Intervention strength") +
-  ylab("Average FWER") +
+  ylab("FWER") +
   ggtitle("Family-Wise Error Rate") +
   theme_bw(base_size = size)
 
@@ -462,7 +462,7 @@ p.FWER.samp <- ggplot(df.plot.FWER.samp, aes(sample.size, value)) +
   scale_color_manual(values = color.palette, labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual', 'Oracle')) +
   scale_fill_manual(values = color.palette) +
   xlab("Sample size") +
-  ylab("Average FWER") +
+  ylab("FWER") +
   ggtitle("Family-Wise Error Rate") +
   theme_bw(base_size = size)
 

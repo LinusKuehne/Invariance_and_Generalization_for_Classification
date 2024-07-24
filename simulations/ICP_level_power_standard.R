@@ -190,7 +190,7 @@ p.FWER.int <- ggplot(df.plot.FWER.int, aes(intervention.strength, value)) +
   geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black", linewidth = 0.75) +
   xlab("Intervention strength") +
-  ylab("Average FWER") +
+  ylab("FWER") +
   ggtitle("Family-Wise Error Rate") +
   theme_bw(base_size = size)
 
@@ -391,7 +391,7 @@ p.FWER.samp <- ggplot(df.plot.FWER.samp, aes(sample.size, value)) +
   geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black", linewidth = 0.75) +
   xlab("Sample size") +
-  ylab("Average FWER") +
+  ylab("FWER") +
   ggtitle("Family-Wise Error Rate") +
   theme_bw(base_size = size)
 

@@ -172,7 +172,7 @@ p.mod1 <- ggplot(points.mod1, aes(x = x, y = y, color = group)) +
   ) +
   labs(
     color = "Group",
-    x = "Average rejection rate across\ninvariant subsets",
+    x = "Rejection rate across\ninvariant subsets",
     y = "Average Jaccard index",
     title = "Logistic Regression Model"
   ) +
@@ -306,7 +306,7 @@ p.mod2 <- ggplot(points.mod2, aes(x = x, y = y, color = group)) +
   ) +
   labs(
     color = "Group",
-    x = "Average rejection rate across\ninvariant subsets",
+    x = "Rejection rate across\ninvariant subsets",
     y = "Average Jaccard index",
     title = "Probit Regression Model"
   ) +
@@ -440,7 +440,7 @@ p.mod3 <- ggplot(points.mod3, aes(x = x, y = y, color = group)) +
   ) +
   labs(
     color = "Group",
-    x = "Average rejection rate across\ninvariant subsets",
+    x = "Rejection rate across\ninvariant subsets",
     y = "Average Jaccard index",
     title = "Non-Linear Logistic Regression Model"
   ) +
@@ -576,7 +576,7 @@ p.mod4 <- ggplot(points.mod4, aes(x = x, y = y, color = group)) +
   ) +
   labs(
     color = "Group",
-    x = "Average rejection rate across\ninvariant subsets",
+    x = "Rejection rate across\ninvariant subsets",
     y = "Average Jaccard index",
     title = "Bump Model"
   ) +
