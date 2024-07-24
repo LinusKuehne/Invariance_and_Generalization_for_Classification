@@ -282,7 +282,6 @@ residual <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, po
 
 corr <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts){
   
-  print("regress Y...")
   probs <- get.probs(set, cube, labels, envVar = NULL, cluster.assoc, posts)
   
   res.y.rf <- y.num - probs
@@ -301,10 +300,8 @@ corr <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts)
     indicator.matrix.9[j,] <- as.numeric(levels(group9) == group9[j])
   }
   
-  print("regress env5...")
   env.res.5 <- get.probs.env(set, cube, group5, cluster.assoc, posts)
   
-  print("regress env9...")
   env.res.9 <- get.probs.env(set, cube, group9, cluster.assoc, posts)
   
   
@@ -316,7 +313,6 @@ corr <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts)
   
   pvals.vec.5 <- numeric(ncol(e.res.mat.5))
   
-  print("corr test 5")
   for(l in 1:length(pvals.vec.5)){
     
     e.res.5 <- e.res.mat.5[,l]
@@ -332,7 +328,6 @@ corr <- function(set, cube, labels, y.num, group5, group9, cluster.assoc, posts)
   
   pvals.vec.9 <- numeric(ncol(e.res.mat.9))
   
-  print("corr test 9")
   for(l in 1:length(pvals.vec.9)){
     
     e.res.9 <- e.res.mat.9[,l]
