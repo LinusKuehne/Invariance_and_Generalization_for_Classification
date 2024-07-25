@@ -26,7 +26,9 @@ load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
-source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
+
+
+source(file.path(script_dir, "../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R"))
 
 
 
@@ -186,8 +188,7 @@ file.name <- paste0("pyroCb_LOEO_top_n_", top.n)
 
 print("save data")
 
-save(wbce.per.env.loeo, file = paste0("../saved_data/", file.name, ".rdata"))
-
+save(wbce.per.env.loeo, file = file.path(script_dir, paste0("../saved_data/", file.name, ".rdata")))
 
 
 
