@@ -6,7 +6,7 @@ top.n <- 5
 
 
 
-
+set.seed(1)
 
 
 
