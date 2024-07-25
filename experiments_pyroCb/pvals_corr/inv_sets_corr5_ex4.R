@@ -13,9 +13,8 @@ load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
-
-source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
-source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
+source(file.path(script_dir, "../../code/code_pyroCb/pyroCb_invariance_tests.R"))
+source(file.path(script_dir, "../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R"))
 
 
 
@@ -103,6 +102,15 @@ for(s in 1:length(sets)){
   print(paste0("Compute set ", s, " for env ", e))
   test.corr <- corr.single(set = set, cube = X.train, labels = labels.train, y.num = y.num.train, env_test = train.env, cluster.assoc = event_df_train$clusters_env, posts)
   
+  # if the environments are predicted perfectly, there is no variations in the 
+  # residual matrix corresponding to the environments. This yields an NA for the
+  # p-value of the correlation test. In this case, since there is no variation, 
+  # we cannot conduct the test. Therefore, we also cannot reject the invariance
+  # and we therefore set the p-value to 1
+  if(is.na(test.corr)){
+    test.corr <- 1
+  }
+  
   pvals.e[s] <- test.corr
 }
 
@@ -117,12 +125,12 @@ pvals_ex4 <- pvals
 
 
 
-save(pvals_ex4, file = "inv_sets_corr5_ex4.rdata")
 
+save(pvals_ex4, file = file.path(script_dir, "inv_sets_corr5_ex4.rdata"))
 
 
 
 # store the sessionInfo:
-writeLines(capture.output(sessionInfo()), "inv_sets_corr5_ex4.txt")
+writeLines(capture.output(sessionInfo()), file.path(script_dir, "inv_sets_corr5_ex4.txt"))
 
 
