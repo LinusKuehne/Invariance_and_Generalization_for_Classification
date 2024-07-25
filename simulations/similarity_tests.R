@@ -174,7 +174,7 @@ mat <- mat/n.sim
 #-------------------------------------------------------------------------------
 
 
-
+save(mat, file = file.path(script_dir, "saved_data/similarity_tests.rdata"))
 
 
 
@@ -194,8 +194,8 @@ df <- melt(mat)
 
 
 # generate grid
-x <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. wBCE")
-y <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. wBCE")
+x <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO loss")
+y <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO loss")
 data <- expand.grid(X=x, Y=y)
 data$Z <- df$value
 
