@@ -152,11 +152,9 @@ for(sim in 1:n.sim){
   tau.mat <- matrix(0, nrow = ncol(pvals), ncol = ncol(pvals))
   
   
-  count <- 0
   
   for(j in 1:(ncol(tau.mat)-1)){
     for(i in (j+1):ncol(tau.mat)){
-      count <- count + 1
       tau.mat[i,j] <- cor(x = pvals[,i], y = pvals[,j], method = "kendall")
     }
   }
