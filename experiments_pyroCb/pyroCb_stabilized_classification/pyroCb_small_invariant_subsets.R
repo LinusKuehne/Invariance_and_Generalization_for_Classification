@@ -42,8 +42,8 @@ env_continent <- as.factor(ifelse(event_df$lon > 0, "aus", "am"))
 
 
 # choose which environment grouping is to be used
-envs <- env5
-
+#envs <- env5
+envs <- env_continent
 
 
 # define subsets of predictors to use
