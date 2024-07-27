@@ -92,8 +92,8 @@ df <- melt(mat)
 
 
 # generate grid
-x <- c("DeLong_cont", "DeLong_5", "DeLong_9", "GCM_5", "GCM_9", "Corr_5", "Corr_9", "Residual_5", "Residual_9", "Neg. LOEO CV loss")
-y <- c("DeLong_cont", "DeLong_5", "DeLong_9", "GCM_5", "GCM_9", "Corr_5", "Corr_9", "Residual_5", "Residual_9", "Neg. LOEO CV loss")
+x <- c("DeLong (cont.)", "DeLong (5)", "DeLong (9)", "TRAM-GCM (5)", "TRAM-GCM (9)", "Correlation (5)", "Correlation (9)", "Residual (5)", "Residual (9)", "Neg. LOEO CV loss")
+y <- c("DeLong (cont.)", "DeLong (5)", "DeLong (9)", "TRAM-GCM (5)", "TRAM-GCM (9)", "Correlation (5)", "Correlation (9)", "Residual (5)", "Residual (9)", "Neg. LOEO CV loss")
 
 data <- expand.grid(X=x, Y=y)
 data$Z <- df$value
@@ -193,8 +193,8 @@ df <- melt(mat)
 
 
 # generate grid
-x <- c("DeLong_cont", "DeLong_5", "DeLong_9", "GCM_5", "GCM_9", "Corr_5", "Corr_9", "Residual_5", "Residual_9", "Neg. LOEO CV loss")
-y <- c("DeLong_cont", "DeLong_5", "DeLong_9", "GCM_5", "GCM_9", "Corr_5", "Corr_9", "Residual_5", "Residual_9", "Neg. LOEO CV loss")
+x <- c("DeLong (cont.)", "DeLong (5)", "DeLong (9)", "TRAM-GCM (5)", "TRAM-GCM (9)", "Correlation (5)", "Correlation (9)", "Residual (5)", "Residual (9)", "Neg. LOEO CV loss")
+y <- c("DeLong (cont.)", "DeLong (5)", "DeLong (9)", "TRAM-GCM (5)", "TRAM-GCM (9)", "Correlation (5)", "Correlation (9)", "Residual (5)", "Residual (9)", "Neg. LOEO CV loss")
 
 data <- expand.grid(X=x, Y=y)
 data$Z <- df$value
