@@ -192,8 +192,8 @@ df <- melt(mat)
 
 
 # generate grid
-x <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO loss")
-y <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO loss")
+x <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO CV loss")
+y <- c("DeLong (RF)", "DeLong (GLM)", "TRAM-GCM (RF)", "TRAM-GCM (GLM)", "Correlation", "Residual", "Neg. LOEO CV loss")
 data <- expand.grid(X=x, Y=y)
 data$Z <- df$value
 
@@ -203,7 +203,7 @@ plt <- ggplot(data, aes(X, Y, fill= Z)) +
   geom_tile() +
   scale_fill_gradient(low="white", high="blue", na.value = "black")  +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank()) +
-  labs(title = "Kendall's Tau between p-values of the tests", fill = "Kendall's Tau") +
+  labs(title = "Kendall's Tau between different rankings", fill = "Kendall's Tau") +
   theme_bw(base_size = size) +
   theme(axis.title.x = element_blank(), 
         axis.title.y = element_blank(),
