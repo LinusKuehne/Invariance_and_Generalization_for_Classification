@@ -140,7 +140,6 @@ wbce.per.env.sc <- data.frame(internal_mean = numeric(length(levels(envs))),
 
 
 
-wbce.per.env.rf.selected.vars <- wbce.per.env.rf.all.vars <- numeric(length(levels(envs)))
 
 
 
@@ -467,51 +466,10 @@ for(e in 1:length(levels(envs))){
 
 
 
-print("find performance scores of normal models")
-for(e in 1:length(levels(envs))){
-  
-  i.test <- which(envs == levels(envs)[e])
-  i.train <- -i.test
-  
-  X.train <- cube[i.train, ]
-  X.val <- cube[i.test, ]
-  
-  labels.train <- labels[i.train]
-  labels.test <- labels[i.test]
-  
-  y.num.train <- y.num[i.train]
-  y.num.test <- y.num[i.test]
-  
-  
-  # use all variables this time
-  set <- sets[[length(sets)]]
-  
-  ind.set <- as.vector(unlist(sapply(X = set, function(i) posts[i]:(posts[i+1]-1))))
-  
-  
-  rf.mod.sel <- ranger(y = labels.train, x = X.train[, ind.set], probability = T)
-  
-  pred.probs.sel <- predict(rf.mod.sel, data = X.val[, ind.set])$predictions[,"1"]
-  
-  wbce.per.env.rf.selected.vars[e] <- BCE.weighted(y = y.num.test, y.hat = pred.probs.sel)
-  
-  
-  
-  rf.mod.all <- ranger(y = labels.train, x = X.train, probability = T)
-  pred.probs.all <- predict(rf.mod.all, data = X.val)$predictions[,"1"]
-  
-  wbce.per.env.rf.all.vars[e] <- BCE.weighted(y = y.num.test, y.hat = pred.probs.all)
-
-  
-}
-
-
 
 print("save data")
 
 save(wbce.per.env.sc,
-     wbce.per.env.rf.selected.vars,
-     wbce.per.env.rf.all.vars,
      num.inv.sets,
      file = "../saved_data/pyroCb_stabilized_classification_res5.rdata")
 
