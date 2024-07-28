@@ -253,8 +253,7 @@ for(b in 1:B){
 file.name <- paste0("pyroCb_small_invariant_subsets_E_", length(levels(envs)))
 
 
-save(df, vec.increase.mean, vec.increase.max, file = paste0("../saved_data/", file.name, ".rdata"))
-
+save(df, vec.increase.mean, vec.increase.max, file = file.path(script_dir, paste0("saved_data/", file.name, ".rdata")))
 
 
 # get confidence intervals
@@ -265,7 +264,7 @@ t.test(vec.increase.max)
 
 
 # store the sessionInfo:
-writeLines(capture.output(sessionInfo()), file.path(script_dir, paste0("../sessionInfo/", file.name, ".txt")))
+writeLines(capture.output(sessionInfo()), file.path(script_dir, paste0("sessionInfo/", file.name, ".txt")))
 
 
 

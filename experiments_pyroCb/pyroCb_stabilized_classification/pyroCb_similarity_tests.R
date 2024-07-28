@@ -105,7 +105,7 @@ plt <- ggplot(data, aes(X, Y, fill= Z)) +
   geom_tile() +
   scale_fill_gradient(low="white", high="blue", na.value = "black")  +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank()) +
-  labs(title = "Kendall's Tau between different rankings", 
+  labs(title = "Consistency between different rankings", 
        subtitle = "All subsets",
        fill = "Kendall's Tau") +
   theme_bw(base_size = size) +
@@ -206,7 +206,7 @@ plt.big <- ggplot(data, aes(X, Y, fill= Z)) +
   geom_tile() +
   scale_fill_gradient(low="white", high="blue", na.value = "black")  +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank()) +
-  labs(title = "Kendall's Tau between different rankings", 
+  labs(title = "Consistency between different rankings", 
        subtitle = "Subsets of size > 6",
        fill = "Kendall's Tau") +
   theme_bw(base_size = size) +
