@@ -146,7 +146,7 @@ df.invariant.ecdf.randDAG <- data.frame(
 size <- 10
 
 p.randDAG <- ggplot(df.invariant.ecdf.randDAG, aes(x, colour = g)) +
-  stat_ecdf() +
+  stat_ecdf(linewidth = 1) +
   geom_abline() +
   scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
   labs(color='') +
@@ -154,10 +154,11 @@ p.randDAG <- ggplot(df.invariant.ecdf.randDAG, aes(x, colour = g)) +
   ylab("Empirical CDF") +
   ggtitle("ECDF of p-values of Invariant Subsets") +
   theme_bw(base_size = size) +
-  theme(legend.position = "bottom", legend.text = element_text(size=size))
-#p.randDAG
+  theme(legend.position = "bottom", 
+        legend.text = element_text(size=size))
+p.randDAG
 
-ggsave(filename = file.path(script_dir, "saved_plots/ecdf_randomSCM.pdf"), width = 5, height = 5.5)
+ggsave(filename = file.path(script_dir, "saved_plots/ecdf_randomSCM.pdf"), width = 4.6, height = 5.5)
 
 
 

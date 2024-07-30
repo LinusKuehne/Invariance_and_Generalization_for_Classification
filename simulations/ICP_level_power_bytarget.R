@@ -161,8 +161,11 @@ for(tar in 1:6){
 
 
 
-# colors for each test
+# colors for each response
 group_colors <- scales::hue_pal()(6)
+
+# shapes for each response
+group_shapes <- c(1, 2, 5, 4, 3, 6)
 
 response_labels <- c("Response: 1", "Response: 2", "Response: 3", "Response: 4", "Response: 5", "Response: 6")
 
@@ -186,16 +189,19 @@ points.mod1.delongRF <- data.frame(
 
 
 
-p.delongRF <- ggplot(points.mod1.delongRF, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.delongRF <- ggplot(points.mod1.delongRF, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "DeLong (RF)"
@@ -204,8 +210,9 @@ p.delongRF <- ggplot(points.mod1.delongRF, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
 
 #p.delongRF
 
@@ -230,16 +237,19 @@ points.mod1.delongGLM <- data.frame(
 
 
 
-p.delongGLM <- ggplot(points.mod1.delongGLM, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.delongGLM <- ggplot(points.mod1.delongGLM, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "DeLong (GLM)"
@@ -248,8 +258,9 @@ p.delongGLM <- ggplot(points.mod1.delongGLM, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
 
 #p.delongGLM
 
@@ -274,16 +285,19 @@ points.mod1.tramRF <- data.frame(
 
 
 
-p.tramRF <- ggplot(points.mod1.tramRF, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.tramRF <- ggplot(points.mod1.tramRF, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "TRAM-GCM (RF)"
@@ -292,8 +306,9 @@ p.tramRF <- ggplot(points.mod1.tramRF, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
 
 #p.tramRF
 
@@ -317,16 +332,19 @@ points.mod1.tramGLM <- data.frame(
 
 
 
-p.tramGLM <- ggplot(points.mod1.tramGLM, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.tramGLM <- ggplot(points.mod1.tramGLM, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "TRAM-GCM (GLM)"
@@ -335,10 +353,10 @@ p.tramGLM <- ggplot(points.mod1.tramGLM, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
 
-#p.tramGLM
+p.tramGLM
 
 
 
@@ -361,16 +379,19 @@ points.mod1.corr <- data.frame(
 
 
 
-p.corr <- ggplot(points.mod1.corr, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.corr <- ggplot(points.mod1.corr, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "Correlation"
@@ -379,8 +400,9 @@ p.corr <- ggplot(points.mod1.corr, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
 
 #p.corr
 
@@ -405,16 +427,19 @@ points.mod1.res <- data.frame(
 
 
 
-p.residual <- ggplot(points.mod1.res, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.residual <- ggplot(points.mod1.res, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "Residual"
@@ -423,8 +448,9 @@ p.residual <- ggplot(points.mod1.res, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
+
 
 #p.residual
 
@@ -447,16 +473,19 @@ points.mod1.oracle <- data.frame(
 
 
 
-p.oracle <- ggplot(points.mod1.oracle, aes(x = x, y = y, color = group)) +
-  geom_point(shape = 1, size = 2, stroke = 1.5) + 
+p.oracle <- ggplot(points.mod1.oracle, aes(x = x, y = y, color = group, shape = group)) +
+  geom_point(size = 2.5, stroke = 1.5) + 
   scale_color_manual(values = group_colors) +
+  scale_shape_manual(values = group_shapes) +
   geom_vline(xintercept = 0.05, linetype = "dotted", color = "black") +
   theme_bw(base_size = size) +
   guides(
-    color = guide_legend(override.aes = list(shape = 1, size = 2))  
+    color = guide_legend(override.aes = list(size = 2)),
+    shape = guide_legend(override.aes = list(size = 2))
   ) +
   labs(
     color = "Group",
+    shape = "Group",
     x = "FWER",
     y = "Jaccard index",
     title = "Oracle"
@@ -465,8 +494,8 @@ p.oracle <- ggplot(points.mod1.oracle, aes(x = x, y = y, color = group)) +
     legend.position = "bottom",
     legend.title = element_blank(),
     legend.text = element_text(size = size)
-  )+
-  coord_cartesian(ylim = c(0, 1)) 
+  ) +
+  coord_cartesian(ylim = c(0, 1))
 
 #p.oracle
 
