@@ -4,7 +4,6 @@
 library(rje)
 
 
-
 # get the path of this script
 script_dir <- getwd()
 
@@ -16,9 +15,6 @@ load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
 source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
-
-
-
 
 
 
@@ -36,10 +32,7 @@ sets[[1]] <- c(0)
 
 y.num <- as.numeric(labels)-1
 
-
-
-
-
+# group into five environments
 envs <- env5
 
 
@@ -49,7 +42,7 @@ wbce.per.env.random <- wbce.per.env.empty <- numeric(length(levels(envs)))
 set.seed(1)
 
 
-
+# LOEO CV
 for(e in 1:length(levels(envs))){
   
   i.test <- which(envs == levels(envs)[e])

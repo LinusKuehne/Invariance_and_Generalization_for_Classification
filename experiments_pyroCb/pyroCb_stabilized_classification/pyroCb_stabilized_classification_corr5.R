@@ -21,11 +21,6 @@ source(file.path(script_dir, "../../code/code_pyroCb/pyroCb_stabilized_classific
 
 
 
-
-
-
-
-
 # from the variable screening script
 # using glm group lasso to get 13 variables
 varincl <- c(3, 5, 8, 9, 10, 11, 12, 13, 14, 23, 28, 29, 30)
@@ -48,22 +43,12 @@ B <- 100
 y.num <- as.numeric(labels)-1
 
 
-
-
-
 envs <- env5
-
-
-
-
-
-
-
-
 
 
 pvals <- matrix(NA, nrow = length(sets), ncol = length(levels(envs)))
 
+# find invariant subsets when excluding each environment once
 for(e in 1:length(levels(envs))){
 
 
@@ -84,10 +69,8 @@ for(e in 1:length(levels(envs))){
   y.num.test <- y.num[i.test]
 
 
-
-
-
-
+  # generate 5 folds for CV while making sure all observations for the same wildfires
+  # are placed in the same fold
   event_df_train <- unlist((event_df$wildfire_id)[i.train])
   event_df_train <- data.frame("wildfire_id" = event_df_train)
   seg_base <- event_df_train[!duplicated(event_df_train), , drop = F]
@@ -125,9 +108,6 @@ for(e in 1:length(levels(envs))){
 
 
 
-
-
-
 # check how many invariant sets:
 # If there are no invariant sets for one environment, then take the one with highest p-value
 
@@ -153,11 +133,7 @@ wbce.per.env.sc <- data.frame(internal_mean = numeric(length(levels(envs))),
 
 
 
-
-
-
-
-# internal: worst case ---------------------------------------------------------
+# worst case loss to rank the predictive subsets with s_pred(S) ----------------
 
 for(e in 1:length(levels(envs))){
 
@@ -174,10 +150,7 @@ for(e in 1:length(levels(envs))){
   y.num.test <- y.num[i.test]
   
   
-  
-  
   train.env <- droplevels(envs[i.train])
-  
   
   
 
@@ -210,8 +183,6 @@ for(e in 1:length(levels(envs))){
     
     dat.train <- X.train[, set.indx]
     
-  
-    
     
     wbce.train.envs <- numeric(length(levels(train.env)))
     
@@ -227,11 +198,8 @@ for(e in 1:length(levels(envs))){
       probs <- predict(rf, data = dat.train[test.indx, ])$predictions[,"1"]
       
       wbce.train.envs[ee] <- BCE.weighted(y = y.num.train[test.indx], y.hat = probs)
-      
     }
-    
     wbce.worst.vec[s] <- max(wbce.train.envs)
-    
   }
   
   
@@ -260,26 +228,19 @@ for(e in 1:length(levels(envs))){
     
     
     for(eee in 1:length(levels(boot.env.train))){
-      
-      
+
       test.indx <- which(boot.env.train == levels(boot.env.train)[eee])
       train.indx <- -test.indx
-      
-      
       
       rf <- ranger(y = (labels.train[boot.ind])[train.indx], x = dat.boot[train.indx, ], probability = T)
       probs <- predict(rf, data = dat.boot[test.indx, ])$predictions[,"1"]
       
       wbce.boot[eee] <- BCE.weighted(y = (y.num.train[boot.ind])[test.indx], y.hat = probs)
-      
     }
     
     boot.vec[b] <- max(wbce.boot)
   }
 
-  
-  
-  
   
   c.pred <- quantile(x = boot.vec, probs = 1-a.pred)
 
@@ -295,8 +256,6 @@ for(e in 1:length(levels(envs))){
   prob.preds <- numeric(length(labels.test))
   
   
-  
-  
   for(set.indx in 1:length(inv.class.opt.sets)){
     print(paste0("make predictions for inv.class.opt sets for env ", e, ": set ", set.indx, " out of ", length(inv.class.opt.sets)))
     
@@ -307,16 +266,11 @@ for(e in 1:length(levels(envs))){
     
     weights <- length(labels.train)/(2*table_y)  # one half times inverse of class frequency 
     
-    
     rf.mod <- ranger(y = labels.train, x = X.train[, ind.set], probability = T, class.weights = weights)
-
-
+    
     prob.preds <- prob.preds + predict(rf.mod, data = X.val[, ind.set])$predictions[,"1"]
-
   }
-  
   prob.preds <- prob.preds/length(inv.class.opt.sets)
-  
   
   wbce.per.env.sc$internal_worst[e] <- BCE.weighted(y = y.num.test, y.hat = prob.preds)
 }
@@ -328,7 +282,7 @@ for(e in 1:length(levels(envs))){
 
 
 
-# internal: mean ---------------------------------------------------------------
+# mean CV loss to rank the predictive subsets with s_pred(S) -------------------
 
 for(e in 1:length(levels(envs))){
   
@@ -344,8 +298,8 @@ for(e in 1:length(levels(envs))){
   y.num.train <- y.num[i.train]
   y.num.test <- y.num[i.test]
   
-  
-  
+  # generate 5 folds for CV while making sure all observations for the same wildfires
+  # are placed in the same fold
   event_df_train <- unlist((event_df$wildfire_id)[i.train])
   event_df_train <- data.frame("wildfire_id" = event_df_train)
   seg_base <- event_df_train[!duplicated(event_df_train), , drop = F]
@@ -353,15 +307,9 @@ for(e in 1:length(levels(envs))){
   seg_base$clusters_env <- folds
   event_df_train <- merge(x = event_df_train, y = seg_base, all.x = T)
   
-  
-  
-  
-  
-  
+ 
   train.env <- droplevels(envs[i.train])
-  
-  
-  
+
   
   # invariant sets -------------------------------------------------------------
   inv.sets <- sets[pvals[,e] > a.inv]
@@ -370,8 +318,6 @@ for(e in 1:length(levels(envs))){
   if(length(inv.sets) < 0.0001){
     inv.sets[[1]] <- sets[[which.max(pvals[,e])]]
   }
-  
-  
   
   
   # invariant and class. optimal -----------------------------------------------
@@ -391,9 +337,7 @@ for(e in 1:length(levels(envs))){
     
   }
   
-  
-  
-  
+
   
   # determine c.pred with bootstrap -----------------------------------------------
   
@@ -407,18 +351,12 @@ for(e in 1:length(levels(envs))){
     
     boot.ind <- base::sample(x = 1:nrow(X.train), size = nrow(X.train), replace = T)
     
-    
     dat.boot <- X.train[boot.ind, ]
-    
-
+  
     probs <- get.probs.sc(set = Q.set, cube = dat.boot, labels = labels.train[boot.ind], envs = clusters, posts)
     
     boot.vec[b] <- BCE.weighted(y = y.num.train[boot.ind], y.hat = probs)
-    
   }
-  
-  
-  
   
   
   c.pred <- quantile(x = boot.vec, probs = 1-a.pred)
@@ -448,12 +386,9 @@ for(e in 1:length(levels(envs))){
     
     weights <- length(labels.train)/(2*table_y)  # one half times inverse of class frequency 
     
-    
     rf.mod <- ranger(y = labels.train, x = X.train[, ind.set], probability = T, class.weights = weights)
     
-    
     prob.preds <- prob.preds + predict(rf.mod, data = X.val[, ind.set])$predictions[,"1"]
-    
   }
   
   prob.preds <- prob.preds/length(inv.class.opt.sets)
@@ -461,20 +396,6 @@ for(e in 1:length(levels(envs))){
   
   wbce.per.env.sc$internal_mean[e] <- BCE.weighted(y = y.num.test, y.hat = prob.preds)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

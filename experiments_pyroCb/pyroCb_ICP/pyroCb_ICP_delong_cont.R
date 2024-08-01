@@ -1,13 +1,9 @@
 # in this script, we run ICP with the continuous DeLong test
 
 
-
-
 library(ranger)
 library(pROC)
 library(rje)
-
-
 
 # get the path of this script
 script_dir <- getwd()
@@ -18,13 +14,10 @@ load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
-
 source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
 
 
 names(envVars) <- c("lat", "long", "date")
-
-
 
 
 # from the variable screening script
@@ -37,18 +30,13 @@ sets <- powerSet(varincl)
 sets[[1]] <- c(0)
 
 
-
 # tuning parameter
 a.inv <- 0.05
 
 y.num <- as.numeric(labels)-1
 
 
-
 pvals.delong.cont.1tail <- numeric(length(sets))
-
-
-
 
 
 set.seed(1)
@@ -63,11 +51,7 @@ for(s in 1:length(sets)){
   
   
   pvals.delong.cont.1tail[s] <- test.delong.cont$pval_1tail
-
-  
 }
-
-
 
 
 inv.sets.delong.cont <- sets[pvals.delong.cont.1tail>a.inv]
@@ -75,8 +59,6 @@ inv.sets.delong.cont <- sets[pvals.delong.cont.1tail>a.inv]
 
 # Compute the intersection of all vectors in the list
 intersection.delong.cont <- Reduce(intersect, inv.sets.delong.cont)
-
-
 
 
 

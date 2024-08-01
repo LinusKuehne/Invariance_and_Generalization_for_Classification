@@ -44,8 +44,6 @@ B <- 100
 y.num <- as.numeric(labels)-1
 
 
-
-
 # we use five environments
 envs <- env5
 
@@ -72,7 +70,7 @@ wbce.per.env.sc <- data.frame(internal_mean = numeric(length(levels(envs))),
 
 
 
-# internal ranking: worst case -------------------------------------------------
+# worst case loss to rank the predictive subsets with s_pred(S) ----------------
 
 for(e in 1:length(levels(envs))){
 
@@ -92,7 +90,6 @@ for(e in 1:length(levels(envs))){
   train.env <- droplevels(envs[i.train])
   
   
-  
 
   # invariant sets -------------------------------------------------------------
   inv.sets <- sets[pvals > a.inv]
@@ -101,8 +98,6 @@ for(e in 1:length(levels(envs))){
   if(length(inv.sets) < 0.0001){
     inv.sets[[1]] <- sets[[which.max(pvals)]]
   }
-  
-  
   
   
   # invariant and class. optimal -----------------------------------------------
@@ -224,7 +219,7 @@ for(e in 1:length(levels(envs))){
 
 
 
-# internal ranking: mean CV loss -----------------------------------------------
+# mean CV loss to rank the predictive subsets with s_pred(S) -------------------
 
 for(e in 1:length(levels(envs))){
   
@@ -280,9 +275,7 @@ for(e in 1:length(levels(envs))){
     wbce.vec[s] <- BCE.weighted(y = y.num.train, y.hat = probs)
   }
   
-  
-  
-  
+
   
   # determine c.pred with bootstrap --------------------------------------------
   

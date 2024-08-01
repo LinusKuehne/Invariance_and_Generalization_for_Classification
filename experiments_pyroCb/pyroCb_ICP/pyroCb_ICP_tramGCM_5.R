@@ -1,8 +1,6 @@
 # in this script, we run ICP with the tram-GCM (RF) test with 5 envs
 
 
-
-
 library(ranger)
 library(pROC)
 library(rje)
@@ -22,10 +20,6 @@ load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
 
 
-
-
-
-
 # from the variable screening script
 # using glm group lasso to get 13 variables
 varincl <- c(3, 5, 8, 9, 10, 11, 12, 13, 14, 23, 28, 29, 30)
@@ -42,12 +36,7 @@ a.inv <- 0.05
 
 y.num <- as.numeric(labels)-1
 
-
-
 pvals.tram.5 <- numeric(length(sets))
-
-
-
 
 
 set.seed(1)
@@ -61,12 +50,7 @@ for(s in 1:length(sets)){
   test.tram.5 <- rangerICP.paper(set, cube, labels, y.num, envs = env5, cluster.assoc = event_df$cluster_random, posts)  
   
   pvals.tram.5[s] <- test.tram.5
-
-  
-  
 }
-
-
 
 
 inv.sets.tram.5 <- sets[pvals.tram.5>a.inv]
@@ -74,8 +58,6 @@ inv.sets.tram.5 <- sets[pvals.tram.5>a.inv]
 
 # Compute the intersection of all vectors in the list
 intersection.tram.5 <- Reduce(intersect, inv.sets.tram.5)
-
-
 
 
 

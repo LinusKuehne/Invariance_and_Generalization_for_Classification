@@ -1,4 +1,4 @@
-
+# this script contains utility functions for the experiments on synthetic data
 
 
 # generate uniformly dist. samples from [-max, -min] union [min, max]
@@ -159,17 +159,7 @@ jaccard.standard <- function(pvalues, thresh = 0.05){
 }
 
 
-# compute AUC-type surrogate measure for standard DAG
-# pvalues: vector of length 7 with entries corresp. to the sets
-# list(c(1,2,3), c(1,3), c(1,2), c(2,3), c(1), c(2), c(3), c(0))
-class.score.standard <- function(pvalues){
-  
-  # define ground truth in classification "invariant/not invariant"
-  gt <- c(0,1,0,0,1,0,0,0)
-  
-  roc. <- roc(response = gt, predictor = pvalues, quiet = T, direction = "<")
-  return(auc(roc.))
-}
+
 
 
 
@@ -209,51 +199,6 @@ jaccard <- function(pvalues, thresh = 0.05, stable.sets, num.covariates){
   
 }
 
-
-
-
-
-
-# compute AUC-type surrogate measure for general DAG
-# pvalues: vector with entries corresp. to the sets powerSet(1:num.covariates) (using the rje library)
-# stable.sets: sets which satisfy the d-separation corresponding to invariance (subset of powerSet("X1", "X2", ...))
-# num.covariates are the number of covariates (how many X-variables we have)
-class.score <- function(pvalues, stable.sets, num.covariates){
-  
-  Xnames <- rep("A", num.covariates)
-  for(w in 1:num.covariates){
-    number <- as.character(w)
-    name <- paste("X", number, sep="") 
-    Xnames[w] <- name  
-  }
-  
-  ps <- powerSet(Xnames)
-  
-  # define ground truth in classification "invariant/not invariant"
-  gt <- as.numeric(ps %in% stable.sets)
-  
-  
-  
-  
-  # if all sets are invariant or not invariant, then this score isn't defined
-  # => we sample from a typical value
-  if((sum(gt)==0) || (sum(gt)==2^num.covariates)){
-    print("class.score was sampled")
-    if(t<0.125){
-      return(runif(1, min=0.4, max = 0.7))
-    }else if(t>0.125 && t<0.25){
-      return(runif(1, min=0.6, max = 0.85))
-    }else if(t>0.25 && t<0.5){
-      return(runif(1, min=0.7, max = 0.9))
-    } else{
-      return(runif(1, min=0.9, max = 1))
-    }
-  }
-  
-  
-  roc. <- roc(response = gt, predictor = pvalues, quiet = T, direction = "<")
-  return(auc(roc.))
-}
 
 
 

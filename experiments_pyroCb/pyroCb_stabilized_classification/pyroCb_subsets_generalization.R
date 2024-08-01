@@ -1,12 +1,8 @@
 # in this script, we compute the mean and worst-case generalization error for 
 # all subsets of 13 variables
 
-
-
-
 library(ranger)
 library(rje)
-
 
 
 # get the path of this script
@@ -21,7 +17,6 @@ load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
 
 
-
 # from the variable screening script
 # using glm group lasso to get 13 variables
 varincl <- c(3, 5, 8, 9, 10, 11, 12, 13, 14, 23, 28, 29, 30)
@@ -32,17 +27,14 @@ sets <- powerSet(varincl)
 sets[[1]] <- c(0)
 
 
-
-
-
-
 y.num <- as.numeric(labels)-1
 
 
+# initialize vectors to store results for each set
 wbce.avg <- wbce.worst <- numeric(length(sets))
 
 
-
+# use grouping into five environments
 env <- env5
 
 
@@ -81,7 +73,7 @@ wbce.worst[1] <- max(wbce.vec.empty)
 
 
 
-
+# iterate over all sets
 
 for(s in 2:length(sets)){
   
@@ -89,15 +81,16 @@ for(s in 2:length(sets)){
   
   set <- sets[[s]]
   
+  # obtain columns corresponding to the set
   set.indx <- as.vector(unlist(sapply(X = set, function(i) posts[i]:(posts[i+1]-1))))
   
   dat.set <- cube[, set.indx]
   
-  
   wbce.vec <- numeric(length(levels(env)))
   
+  
+  # iterate over the different environments
   for(e in 1:length(levels(env))){
-    
     
     test.indx <- which(env == levels(env)[e])
     train.indx <- -test.indx
@@ -106,10 +99,12 @@ for(s in 2:length(sets)){
     probs <- predict(rf, data = dat.set[test.indx, ])$predictions[,"1"]
     
     wbce.vec[e] <- BCE.weighted(y = y.num[test.indx], y.hat = probs)
-    
   }
   
+  # L^mean
   wbce.avg[s] <- mean(wbce.vec)
+  
+  # L^worst
   wbce.worst[s] <- max(wbce.vec)
   
 }

@@ -4,17 +4,11 @@
 # tuning parameter
 top.n <- 5
 
-
-
 set.seed(1)
-
-
-
 
 library(ranger)
 library(pROC)
 library(rje)
-
 
 
 # get the path of this script
@@ -29,7 +23,6 @@ load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
 
 
-
 # from the variable screening script
 # using glm group lasso to get 13 variables
 varincl <- c(3, 5, 8, 9, 10, 11, 12, 13, 14, 23, 28, 29, 30)
@@ -41,29 +34,21 @@ sets[[1]] <- c(0)
 
 
 
-
-
-
-
 y.num <- as.numeric(labels)-1
 
 
-
+# use five environments
 envs <- env5
 
+
+# store results
 wbce.per.env.loeo <- numeric(length(levels(envs)))
 names(wbce.per.env.loeo) <- levels(envs)
 
 
 
 
-
-
-
-
-
-
-
+# LOEO CV
 for(e in 1:length(levels(envs))){
   
   i.test <- which(envs == levels(envs)[e])
@@ -80,12 +65,11 @@ for(e in 1:length(levels(envs))){
   
   train.env <- droplevels(envs[i.train])
   
-  
-  
-  
-  
+
   err.e <- numeric(length(sets))
   
+  
+  # iterate over all subsets
   for(s in 1:length(sets)){
     
     print(paste0("working on set ", s, " for environment ",   e))
@@ -105,34 +89,25 @@ for(e in 1:length(levels(envs))){
 
     wbce.train.envs <- numeric(length(levels(train.env)))
     
+    # find subset with best out-of-distribution prediction performance on current training folds
     for(ee in 1:length(levels(train.env))){
-      
       
       test.indx <- which(train.env == levels(train.env)[ee])
       train.indx <- -test.indx
-      
-      
       
       rf <- ranger(y = labels.train[train.indx], x = dat.train[train.indx, ], probability = T)
       probs <- predict(rf, data = dat.train[test.indx, ])$predictions[,"1"]
       
       wbce.train.envs[ee] <- BCE.weighted(y = y.num.train[test.indx], y.hat = probs)
-      
     }
-    
     err.e[s] <- max(wbce.train.envs)
-    
   }
   
-  
-  
-  
-  # top n best sets
+
+  # top.n best sets
   opt.sets.e <- (sort(err.e, index.return=TRUE, decreasing=FALSE)$ix)[1:top.n]
   
-  
-  
-  
+  # store probability predictions
   prob.preds <- numeric(length(labels.test))
   
   for(set.indx in 1:length(opt.sets.e)){
@@ -146,22 +121,16 @@ for(e in 1:length(levels(envs))){
       ind.set <- as.vector(unlist(sapply(X = set, function(i) posts[i]:(posts[i+1]-1))))
     }
     
+    # if subset is empty, randomize rows
     randomizer <- 1:nrow(X.train)
     if(sum(set)< 0.001){
       randomizer <- sample(1:nrow(X.train), size = nrow(X.train), replace = F)
     }
-    
-  
-    
-    
-    
-    
-    
+
     
     table_y <- table(labels.train)  # frequency of each class
     
     weights <- length(labels.train)/(2*table_y)  # one half times inverse of class frequency 
-    
     
     rf.mod <- ranger(y = labels.train, x = X.train[randomizer, ind.set], probability = T, class.weights = weights)
     
@@ -171,9 +140,7 @@ for(e in 1:length(levels(envs))){
   
   prob.preds <- prob.preds/length(opt.sets.e)
   
-  
   wbce.per.env.loeo[e] <- BCE.weighted(y = y.num.test, y.hat = prob.preds)
-  
 }
 
 
@@ -181,15 +148,9 @@ for(e in 1:length(levels(envs))){
 
 file.name <- paste0("pyroCb_LOEO_top_n_", top.n)
 
-
-
-
 print("save data")
 
 save(wbce.per.env.loeo, file = paste0("../saved_data/", file.name, ".rdata"))
-
-
-
 
 
 # store the sessionInfo:

@@ -1,13 +1,9 @@
 # in this script, we run ICP with the correlation test
 
 
-
-
 library(ranger)
 library(pROC)
 library(rje)
-
-
 
 # get the path of this script
 script_dir <- getwd()
@@ -17,13 +13,7 @@ script_dir <- getwd()
 load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
-
-
 source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
-
-
-
-
 
 
 # from the variable screening script
@@ -43,11 +33,7 @@ a.inv <- 0.05
 y.num <- as.numeric(labels)-1
 
 
-
 pvals.corr.5 <- pvals.corr.9 <- numeric(length(sets))
-
-
-
 
 
 set.seed(1)
@@ -60,15 +46,9 @@ for(s in 1:length(sets)){
   
   test.corr <- corr(set, cube, labels, y.num, group5 = env5, group9 = env9, cluster.assoc = event_df$cluster_random, posts)
   
-  
   pvals.corr.5[s] <- test.corr$p.val_fiveEnv
   pvals.corr.9[s] <- test.corr$p.val_nineEnv
-  
-  
-  
 }
-
-
 
 
 inv.sets.corr.5 <- sets[pvals.corr.5>a.inv]
@@ -78,9 +58,6 @@ inv.sets.corr.9 <- sets[pvals.corr.9>a.inv]
 # Compute the intersection of all vectors in the list
 intersection.corr.5 <- Reduce(intersect, inv.sets.corr.5)
 intersection.corr.9 <- Reduce(intersect, inv.sets.corr.9)
-
-
-
 
 
 save(pvals.corr.5, 

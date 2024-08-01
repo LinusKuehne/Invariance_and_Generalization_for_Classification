@@ -1,12 +1,8 @@
 # in this script, we run ICP with the DeLong test on five environments
 
-
-
-
 library(ranger)
 library(pROC)
 library(rje)
-
 
 
 # get the path of this script
@@ -17,13 +13,7 @@ script_dir <- getwd()
 load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
-
-
 source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
-
-
-
-
 
 
 # from the variable screening script
@@ -47,9 +37,6 @@ y.num <- as.numeric(labels)-1
 pvals.delong.5.1tail <- numeric(length(sets))
 
 
-
-
-
 set.seed(1)
 
 
@@ -62,11 +49,7 @@ for(s in 1:length(sets)){
   
   
   pvals.delong.5.1tail[s] <- test.delong.5$pval_1tail
-
-  
 }
-
-
 
 
 inv.sets.delong.5 <- sets[pvals.delong.5.1tail>a.inv]
@@ -76,15 +59,10 @@ inv.sets.delong.5 <- sets[pvals.delong.5.1tail>a.inv]
 intersection.delong.5 <- Reduce(intersect, inv.sets.delong.5)
 
 
-
-
-
 save(pvals.delong.5.1tail, 
      inv.sets.delong.5,
      intersection.delong.5,
      file = "../saved_data/pyroCb_ICP_delong_5.rdata")
-
-
 
 
 # store the sessionInfo:

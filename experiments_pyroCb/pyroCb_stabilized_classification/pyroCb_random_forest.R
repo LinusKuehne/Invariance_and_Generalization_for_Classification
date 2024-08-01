@@ -20,9 +20,6 @@ source("../../code/code_pyroCb/pyroCb_stabilized_classification_utils.R")
 
 
 
-
-
-
 # from the variable screening script
 # using glm group lasso to get 13 variables
 varincl <- c(3, 5, 8, 9, 10, 11, 12, 13, 14, 23, 28, 29, 30)
@@ -38,9 +35,7 @@ sets[[1]] <- c(0)
 y.num <- as.numeric(labels)-1
 
 
-
-
-
+# group into five environments
 envs <- env5
 
 
@@ -50,7 +45,7 @@ wbce.per.env.rf.selected.vars <- wbce.per.env.rf.all.vars <- numeric(length(leve
 set.seed(1)
 
 
-
+# LOEO CV
 for(e in 1:length(levels(envs))){
   
   i.test <- which(envs == levels(envs)[e])
@@ -66,11 +61,10 @@ for(e in 1:length(levels(envs))){
   y.num.test <- y.num[i.test]
   
   
-  # use all variables this time
+  # use all screened variables 
   set <- sets[[length(sets)]]
   
   ind.set <- as.vector(unlist(sapply(X = set, function(i) posts[i]:(posts[i+1]-1))))
-  
   
   rf.mod.sel <- ranger(y = labels.train, x = X.train[, ind.set], probability = T)
   
@@ -79,7 +73,7 @@ for(e in 1:length(levels(envs))){
   wbce.per.env.rf.selected.vars[e] <- BCE.weighted(y = y.num.test, y.hat = pred.probs.sel)
   
   
-  
+  # use all available predictors
   rf.mod.all <- ranger(y = labels.train, x = X.train, probability = T)
   pred.probs.all <- predict(rf.mod.all, data = X.val)$predictions[,"1"]
   
@@ -99,14 +93,9 @@ set.seed(1)
 
 B <- 200
 
-
-
 wbce.mean.sel <- wbce.mean.all <- numeric(B)
 
 wbce.worst.sel <- wbce.worst.all <- numeric(B)
-
-
-
 
 
 for(b in 1:B){
@@ -114,9 +103,7 @@ for(b in 1:B){
   
   wbce.per.env.rf.sel.b <- wbce.per.env.rf.all.b <- numeric(length(levels(envs)))
   
-  
-  
-  
+  # LOEO CV 
   for(e in 1:length(levels(envs))){
     
     i.test <- which(envs == levels(envs)[e])

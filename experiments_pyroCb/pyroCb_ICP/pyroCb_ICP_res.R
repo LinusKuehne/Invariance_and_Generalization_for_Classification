@@ -1,13 +1,8 @@
 # in this script, we run ICP with the invariant residual distribution test
 
-
-
-
 library(ranger)
 library(pROC)
 library(rje)
-
-
 
 # get the path of this script
 script_dir <- getwd()
@@ -18,12 +13,7 @@ load(file.path(script_dir, "../../data/exported_pyrocb.rdata"))
 load(file.path(script_dir, "../saved_data/discrete_envs.rdata"))
 
 
-
 source("../../code/code_pyroCb/pyroCb_invariance_tests.R")
-
-
-
-
 
 
 # from the variable screening script
@@ -47,9 +37,6 @@ y.num <- as.numeric(labels)-1
 pvals.res.5 <- pvals.res.9 <- numeric(length(sets))
 
 
-
-
-
 set.seed(1)
 
 
@@ -60,15 +47,9 @@ for(s in 1:length(sets)){
   
   test.inv.res.dist <- residual(set, cube, labels, y.num, group5 = env5, group9 = env9, cluster.assoc = event_df$cluster_random, posts)
   
-  
   pvals.res.5[s] <- test.inv.res.dist$p.val_fiveEnv
   pvals.res.9[s] <- test.inv.res.dist$p.val_nineEnv
-  
-  
-  
 }
-
-
 
 
 inv.sets.res.5 <- sets[pvals.res.5>a.inv]
@@ -78,9 +59,6 @@ inv.sets.res.9 <- sets[pvals.res.9>a.inv]
 # Compute the intersection of all vectors in the list
 intersection.res.5 <- Reduce(intersect, inv.sets.res.5)
 intersection.res.9 <- Reduce(intersect, inv.sets.res.9)
-
-
-
 
 
 save(pvals.res.5, 

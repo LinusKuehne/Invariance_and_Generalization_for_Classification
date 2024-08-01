@@ -40,11 +40,6 @@ sets[[1]] <- c(0)
 
 
 
-
-
-
-
-
 #-------------------------------------------------------------------------------
 # generate Kendall's tau plot for the p-values of all subsets
 #-------------------------------------------------------------------------------
@@ -68,7 +63,7 @@ tau.mat <- matrix(NA, nrow = ncol(df.p), ncol = ncol(df.p))
 
 
 
-
+# iterate over all comparisons
 for(j in 1:(ncol(df.p)-1)){
   for(i in (j+1):ncol(df.p)){
     tau.mat[i,j] <- cor(x = df.p[,i], y = df.p[,j], method = "kendall")
