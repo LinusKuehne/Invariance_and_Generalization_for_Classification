@@ -39,19 +39,6 @@ When running a script, make sure the working directory is set to the script's lo
 | Utilities for stabilized classification on pyroCb data | code/code_pyroCb/pyroCb_stabilized_classification_utils.R |
 
 
-## Data
-
-| Kind of data | Data location/name |
-| --- | --- |
-| Stored data for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_data |
-| Stored sessionInfo files for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/sessionInfo |
-| Generated plots for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_plots |
-| PyroCb data provided by authors of (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)) | data/pyroCb_data_python |
-| Exported pyroCb data into .rdata format with script experiments_pyroCb/data_preparation/transform_data.R | data/exported_pyrocb.rdata |
-| Stored data for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/saved_data |
-| Stored sessionInfo files for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/sessionInfo |
-| Generated plots from Chapter 6 | experiments_pyroCb/saved_plots |
-
 ## Specific experiments
 
 | Object in thesis | Script location/name |
@@ -78,6 +65,23 @@ When running a script, make sure the working directory is set to the script's lo
 | Fig. B.8 | simulations/visualization_standard_SCM.R |
 | Table B.1 | experiments_pyroCb/pyroCb_stabilized_classification/pyroCb_small_invariant_subsets.R |
 | Fig. B.9 | simulations/similarity_tests.R |
+
+
+
+## Data
+
+| Kind of data | Data location/name |
+| --- | --- |
+| Stored data for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_data |
+| Stored sessionInfo files for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/sessionInfo |
+| Generated plots for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_plots |
+| PyroCb data provided by authors of (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)) | data/pyroCb_data_python |
+| Exported pyroCb data into .rdata format with script experiments_pyroCb/data_preparation/transform_data.R | data/exported_pyrocb.rdata |
+| Stored data for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/saved_data |
+| Stored sessionInfo files for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/sessionInfo |
+| Generated plots from Chapter 6 | experiments_pyroCb/saved_plots |
+
+
 
 
 
