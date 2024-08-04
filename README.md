@@ -1,10 +1,22 @@
 # Invariance and Generalization for Classification
  This repo contains the code associated with the master's thesis "Invariance and Generalization for Classification" written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis was supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
 
- ## Content of the repository
- This repo contains all code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here. 
+This repo contains all R code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here. 
 
-When running a script, make sure the working directory is set to the script's location within the following folder structure:
+When running a script, make sure the working directory is set to the script's location within the folder structure of this repository. For every script we run, the output of the `sessionInfo()` command is saved with the name of the script (and a .txt ending). These files contain the loaded packages, their versions, the operating system, etc. We explain the location of these files below. 
+
+First, we provide tables explicitly stating which experiment in the thesis corresponds to which script in this repository. The references correspond to the thesis uploaded in this repository. 
+
+Then, we explain the folder structure of the repository. This contains essentially the same information as the previous tables, but organized in a different format.
+
+Finally, we explain the contents of the pyroCb data stored in the file data/exported_pyrocb.rdata. 
+
+
+
+
+
+ ## Folder structure
+ 
 
 * "code" contains the functions used by the different experiments on simulated data and the pyroCb data.
     * "code_pyroCb" contains scripts implementing the invariance tests (pyroCb_invariance_tests.R) and utility functions for Stabilized Classification (pyroCb_stabilized_classification_utils.R) *for the pyroCb dataset*
