@@ -3,12 +3,12 @@
 # the functions "pval.<test name>" computes the p-value for all sets of predictors
 
 
-# In all of these functions, set is a subset of 1:p, where p is the number of predictors,
-# and sample is a dataframe where the first p columns correspond to the p covariates,
-# the response is sample$Y, and sample$Env is a factor with the environment indeces.
+# In all of these functions, set is a subset of 1:d, where d is the number of predictors,
+# and sample is a dataframe where the first d columns correspond to the d predictors,
+# the response is sample$Y, and sample$Env is a factor with the environment indices.
 
-# There is a global variable called sets, which is a list of subsets of 1:p; 
-# usually powerSet(1:p) (using the library rje)
+# There is a global variable called sets, which is a list of subsets of 1:d; 
+# usually powerSet(1:d) (using the library rje)
 
 
 
@@ -27,10 +27,13 @@ library(ranger)
 #-------------------------------------------------------------------------------
 
 
-
+# p-values for a single subset "set"
 pval.delong.rf.set <- function(sample, set){
+  
+  # first, only extract the Env column in case set is empty
   Xmat <- sample[, "Env", drop = F]
   
+  # if set is not empty, add the corresponding columns to Xmat
   if(sum(set)>0.0001){
     Xmat <- sample[, c(set,which(names(sample) == "Env")), drop = F]
   }
@@ -49,6 +52,7 @@ pval.delong.rf.set <- function(sample, set){
   roc.noEnv <- roc(response = sample$Y, predictor = RF.noEnv$predictions[,"1"], quiet = T, direction="<")
   roc.Env <- roc(response = sample$Y, predictor = RF.Env$predictions[,"1"], quiet = T, direction="<")
   
+  # run DeLong's test on the ROC curves
   test <- roc.test(roc1 = roc.noEnv, roc2 = roc.Env, method = "delong", alternative = "less")
   
   
@@ -56,14 +60,23 @@ pval.delong.rf.set <- function(sample, set){
 }
 
 
+# compute the p-values for all subsets of predictors
 pvalues.delong.rf <- function(sample){
+  
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
     
+    # compute p-value for set with the DeLong (RF) test
     pval <- pval.delong.rf.set(sample, set)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{
@@ -87,24 +100,32 @@ pvalues.delong.rf <- function(sample){
 #-------------------------------------------------------------------------------
 
 
-
+# p-values for a single subset "set"
 pval.delong.glm.set <- function(sample, set){
+  
+  # first only include the response and Env column
   dat <- sample[, c("Y", "Env"), drop = F]
   
+  # if set is not empty, we also add columns corresponding to the predictors
   if(sum(set)>0.0001){
     dat <- sample[, c(set, which(names(sample) == "Y"), which(names(sample) == "Env")), drop = F]
   }
   
-
+  # initialize vectors for predictions WITH E and WITHOUT E
   preds.Env <- numeric(nrow(sample))
   preds.noEnv <- numeric(nrow(sample))
   
   # make predictions with K-fold CV (since we can't use OOB predictions as for random forests)
   K <- 10
+  
+  # compute folds
   folds <- base::sample(cut(1:nrow(sample), breaks = K, labels = F), replace = F)
   
+  # cross-validation over the K folds for the model including E
   for(k in 1:K){
     test.ind <- which(folds == k)
+    
+    # fit and predict with glm model including E
     glm.Env.k <- glm(Y ~ ., data = dat[-test.ind, , drop = F], family = binomial(link = "logit"))
     preds.Env[test.ind] <- predict(glm.Env.k, newdata = dat[test.ind, , drop = F], type = "response")
   }
@@ -118,6 +139,7 @@ pval.delong.glm.set <- function(sample, set){
   for(k in 1:K){
     test.ind <- which(folds == k)
     
+    # fit and predict with glm model with permuted E
     glm.noEnv.k <- glm(Y ~ ., data = dat[-test.ind, , drop = F], family = binomial(link = "logit"))
     preds.noEnv[test.ind] <- predict(glm.noEnv.k, newdata = dat[test.ind, , drop = F], type = "response")
   }
@@ -126,20 +148,30 @@ pval.delong.glm.set <- function(sample, set){
   roc.noEnv <- roc(response = sample$Y, predictor = preds.noEnv, quiet = T, direction="<")
   roc.Env <- roc(response = sample$Y, predictor = preds.Env, quiet = T, direction="<")
   
+  # compute the DeLong's test
   test <- roc.test(roc1 = roc.noEnv, roc2 = roc.Env, method = "delong", alternative = "less")
   
   return(test$p.value)
 }
 
 
+# compute the p-values for all subsets of predictors
 pvalues.delong.glm <- function(sample){
+  
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
     
+    # compute p-value for set with the DeLong (GLM) test
     pval <- pval.delong.glm.set(sample, set)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{
@@ -166,14 +198,17 @@ pvalues.delong.glm <- function(sample){
 # TRAM-GCM (RF)
 #-------------------------------------------------------------------------------
 
+# p-values for a single subset "set"
 # icp is the output of rangerICP from library tramicp
 pval.tram.rf.set <- function(set, icp){
   
-  
+  # the set is empty
   if(sum(set)<0.00001){
     return(pvalues(icp, "set")["Empty"])
   }
   
+  # if the set is not empty, compute a vector of predictor names
+  # corresponding to the output of rangerICP
   relevant.cov <- rep("A", length(set))
   
   if(sum(set)>0.00001){
@@ -183,6 +218,7 @@ pval.tram.rf.set <- function(set, icp){
       relevant.cov[w] <- name  
     }
     
+    # compute the correct string to extract the output of rangerICP
     rhs <- paste(relevant.cov, collapse = "+")
     
     return(pvalues(icp, "set")[rhs])
@@ -191,7 +227,7 @@ pval.tram.rf.set <- function(set, icp){
 }
 
 
-
+# compute the p-values for all subsets of predictors
 pvalues.tram.rf <- function(sample){
   
   
@@ -204,7 +240,6 @@ pvalues.tram.rf <- function(sample){
     }
   }
   
-  
   cov.names <- rep("A", num.Xs)
   for(w in 1:num.Xs){
     number <- as.character(w)
@@ -212,23 +247,32 @@ pvalues.tram.rf <- function(sample){
     cov.names[w] <- name  
   }
   
+  # compute a string which is a "sum" of the predictors
   rhs <- paste(cov.names, collapse = " + ")
   
-  
+  # transform this into a formula
   form <- as.formula(paste("Y", "~", rhs))
   
   
+  # compute the output with rangerICP
   icp <- rangerICP(formula = form, data = sample, env = ~ Env,
                    test = "gcm.test", verbose = FALSE)
   
   
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
 
+    # compute p-value for set with the TRAM-GCM (RF) test
     pval <- pval.tram.rf.set(set, icp)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{
@@ -254,15 +298,17 @@ pvalues.tram.rf <- function(sample){
 # TRAM-GCM (GLM)
 #-------------------------------------------------------------------------------
 
-
+# p-values for a single subset "set"
 # icp is the output of rangerICP from library tramicp
 pval.tram.glm.set <- function(set, icp){
   
+  # if the set is empty, return the corresponding output of glmICP
   if(sum(set)<0.00001){
     return(pvalues(icp, "set")["Empty"])
   }
   
-  
+  # if the set is not empty, we compute a string to extract the output of glmICP
+  # for the corresponding subset
   relevant.cov <- rep("A", length(set))
   
   if(sum(set)>0.00001){
@@ -272,7 +318,6 @@ pval.tram.glm.set <- function(set, icp){
       relevant.cov[w] <- name  
     }
     
-    
     rhs <- paste(relevant.cov, collapse = "+")
     
     return(pvalues(icp, "set")[rhs])
@@ -281,7 +326,7 @@ pval.tram.glm.set <- function(set, icp){
 }
 
 
-
+# compute the p-values for all subsets of predictors
 pvalues.tram.glm <- function(sample){
   
   # we set up the correct formula and then apply rangerICP from tramicp
@@ -302,21 +347,28 @@ pvalues.tram.glm <- function(sample){
   
   rhs <- paste(cov.names, collapse = " + ")
   
-  
+  # transform into a formula
   form <- as.formula(paste("Y", "~", rhs))
   
-  
+  # run glmICP 
   icp <- glmICP(formula = form, data = sample, env = ~ Env,
                 family = "binomial", verbose = FALSE)
   
   
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
     
+    # compute p-value for set with the TRAM-GCM (GLM) test
     pval <- pval.tram.glm.set(set, icp)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{
@@ -344,8 +396,10 @@ pvalues.tram.glm <- function(sample){
 # Correlation test
 #-------------------------------------------------------------------------------
 
+# p-values for a single subset "set"
 pval.correlation.set <- function(sample, set){
   
+  # convert factor to numeric
   y <- as.numeric(sample$Y)
   e <- sample$Env
   
@@ -359,9 +413,8 @@ pval.correlation.set <- function(sample, set){
     res.y.rf <- y - mod.y.rf$predictions
   }
   
-  
+  # initialize one-hot encoding matrix to compute the environment residuals
   indicator.matrix <- matrix(0, nrow = nrow(sample), ncol = length(levels(sample$Env)))
-  
   for(j in 1:nrow(sample)){
     indicator.matrix[j,] <- as.numeric(levels(e) == e[j])
   }
@@ -375,20 +428,28 @@ pval.correlation.set <- function(sample, set){
     predictions.mat <- mod.e$predictions
   }
   
-  
+  # compute environment residuals
   e.res.mat <- indicator.matrix - predictions.mat
   
-  
+  # initialize vector of p-values with respect to each column of e.res.mat
   pvals.vec <- numeric(ncol(e.res.mat))
+  
+  # iterate over the columns
   for(l in 1:length(pvals.vec)){
     
+    # extract column 
     e.res <- e.res.mat[,l]
-    test <- cor.test(res.y.rf, e.res)
-    pvals.vec[l] <- test$p.value
     
+    # run correlation test
+    test <- cor.test(res.y.rf, e.res)
+    
+    # extract p-value
+    pvals.vec[l] <- test$p.value
   }
   
+  # aggregate p-values with Bonferroni
   p.value <- min(length(pvals.vec)*min(pvals.vec),1)
+  
   return(p.value)
 }
 
@@ -397,15 +458,23 @@ pval.correlation.set <- function(sample, set){
 
 
 
-
+# compute the p-values for all subsets of predictors
 pvalues.correlation <- function(sample){
+  
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
 
+    # compute p-value for set with the correlation test
     pval <- pval.correlation.set(sample, set)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{
@@ -431,8 +500,10 @@ pvalues.correlation <- function(sample){
 # Residual test
 #-------------------------------------------------------------------------------
 
+# p-values for a single subset "set"
 pval.residual.set <- function(sample, set){
   
+  # convert to factor
   y <- as.factor(sample$Y)
   
   # if set is empty
@@ -445,9 +516,13 @@ pval.residual.set <- function(sample, set){
     res.y.rf <- sample$Y - mod.y.rf$predictions[,"1"]
   }
   
-  
+  # put everything into a dataframe
   residual.dat <- data.frame(res = res.y.rf, group = sample$Env)
+  
+  # test for different means across environments
   test.means <- oneway.test(res ~ group, data = residual.dat)
+  
+  # extract p-value
   pval.mean <- test.means$p.value
   return(pval.mean)
   
@@ -456,17 +531,24 @@ pval.residual.set <- function(sample, set){
 
 
 
-
+# compute the p-values for all subsets of predictors
 pvalues.residual <- function(sample){
+  
+  # initialize vector for the p-values for each subset
   pvals <- numeric(length(sets))
   
+  # iterate over all subsets of predictors
   for(s in 1:length(sets)){
+    
+    # extract current set
     set <- sets[[s]]
 
     
-    
+    # compute p-value for set with the residual test
     pval <- pval.residual.set(sample, set)
     
+    # in rare cases, it can happen that a NA is returned. 
+    # In this case, we randomly sample the p-value
     if(is.na(pval)){
       pvals[s] <- runif(1)
     } else{

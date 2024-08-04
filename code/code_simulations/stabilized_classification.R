@@ -30,7 +30,10 @@ c.pred <- function(Smax, sample, a.pred, B = 100, mod){
     if(sum(Smax)>0.0001){
       
       if(mod == "RF"){
+        # fit model on bootstrap sample
         boot.model <- ranger(y = as.factor(boot.sample$Y), x = boot.sample[, Smax, drop = F], probability = T)
+        
+        # predict for the observations NOT in the bootstrap sample used for training
         preds <- predict(boot.model, data = sample[-boot.ind, Smax, drop = F])$predictions[,"1"]
       }
       
@@ -41,18 +44,18 @@ c.pred <- function(Smax, sample, a.pred, B = 100, mod){
         rhs <- paste(x.strings, collapse = " + ")
         form <- as.formula(paste("Y", "~", rhs))
         
+        # fit model on bootstrap sample
         boot.model <- glm(formula = form, family = binomial(link = "logit"), data = boot.sample)
         
+        # predict for the observations NOT in the bootstrap sample used for training
         preds <- predict(boot.model, newdata = sample[-boot.ind, Smax, drop = F], type = "response")
-        
       }
     }
     
-    # compute the BCE score
+    # compute the weighted BCE score for the current bootstrap iteration
     s.pred.vec[b] <- BCE.weighted(y = sample[-boot.ind, "Y"], y.hat = preds)
-    
   }
-  
+  # return the quantile defining the cutoff parameter c(a.pred)
   return(quantile(x = s.pred.vec, probs = 1-a.pred))
 }
 
@@ -77,6 +80,8 @@ model.trainer <- function(sets.train, sample, mod, usage){
   
   # train models.out
   for(s in 1:length(sets.train)){
+    
+    # extract the current set
     set <- sets.train[[s]]
     
     # distinuish whether set is empty or not
@@ -93,9 +98,12 @@ model.trainer <- function(sets.train, sample, mod, usage){
     } else{
       
       if(mod == "RF"){
-        rf <- ranger(y = as.factor(sample$Y), x = sample[, set, drop = F], probability = T)
-        models.out[[s]] <- rf
         
+        # fit random forest
+        rf <- ranger(y = as.factor(sample$Y), x = sample[, set, drop = F], probability = T)
+        
+        # add it to list
+        models.out[[s]] <- rf
         
         # compute score on OOB samples
         preds <- rf$predictions[,"1"]
@@ -104,15 +112,18 @@ model.trainer <- function(sets.train, sample, mod, usage){
       
       if(mod == "GLM"){
         
+        # get the appropriate model formula for glm()
         x.strings <- paste0("X", set)
         rhs <- paste(x.strings, collapse = " + ")
         form <- as.formula(paste("Y", "~", rhs))
         
+        # fit GLM model
         lr <- glm(formula = form, family = binomial(link = "logit"), data = sample)
         
+        # add model to list
         models.out[[s]] <- lr
         
-        # we will compute the scores later if usage == "train", because we need CV 
+        # we will compute the scores later if usage == "train", because we need CV to do so (no "free" OOB samples for GLMs as compared with random forests) 
       }
     }
   }
@@ -125,8 +136,10 @@ model.trainer <- function(sets.train, sample, mod, usage){
     K <- 10
     folds <- base::sample(cut(1:nrow(sample), breaks = K, labels = F), replace = F)
     
+    # initialize matrix for the scores
     score.mat <- matrix(-100, nrow = K, ncol = length(sets.train))
     
+    # iterate over the folds
     for(k in 1:K){
       
       # separate train and test set in CV
@@ -134,7 +147,7 @@ model.trainer <- function(sets.train, sample, mod, usage){
       samp.train <- sample[-test.ind, ]
       samp.test <- sample[test.ind, ]
       
-      
+      # iterate over the sets in sets.train
       for(s in 1:length(sets.train)){
         set <- sets.train[[s]]
         
@@ -146,11 +159,15 @@ model.trainer <- function(sets.train, sample, mod, usage){
           score.mat[k, s] <- BCE.weighted(y = samp.test$Y, y.hat = pred)
           
         } else{
+          # get the correct formula with the predictors corresponding to "set"
           x.strings <- paste0("X", set)
           rhs <- paste(x.strings, collapse = " + ")
           form <- as.formula(paste("Y", "~", rhs))
+          
+          # fit glm model
           lr <- glm(formula = form, family = binomial(link = "logit"), data = samp.train)
             
+          # compute predictions
           pred <- predict(lr, newdata = samp.test[, set, drop = F], type = "response")
             
           # compute score for this set and this fold
@@ -193,7 +210,7 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
   }
   
   
-  
+  # determine which invariance test we use 
   pval.test.set <- switch(as.character(test),
                           "delong.rf" = pvalues.delong.rf,
                           "delong.glm" = pvalues.delong.glm,
@@ -204,15 +221,16 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
                           stop("Invalid input: no such test implemented"))
   
   
+  # compute the p-values for this dataset for all subsets of predictors
   pvals <- pval.test.set(sample)
   
+  # determine the empirically invariant subsets
   inv.sets <- sets[which(pvals > a.inv)]
   
   
-  # if no set is classified as invariant, we take the "most invariant" one
+  # if no set is classified as invariant, we take the "most invariant" one (with largest p-value)
   if(length(inv.sets)==0){
     inv.sets[[1]] <- sets[[which.max(pvals)]]
-    
     
     if(verbose){
       print("no set S satisfies s.inv(S) >= a.inv. Hence, predictions are based on the subset of predictors with largest p-value for the chosen invariance test.")
@@ -245,12 +263,13 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
     print("Compute cutoff c_pred(a_pred)")  
     }
   
-  
+  # compute the cutoff c(a.pred)
   c <- c.pred(Smax, sample, a.pred = a.pred, B = B, mod = mod.internal)
   
-  
+  # extract the invariant subsets which are most predictive
   opt.sets <- inv.sets[which(vec.s.pred < c)]
   
+  # if no set yields a loss lower than c, we take the best one (Smax)
   if(length(opt.sets) == 0){
     if(verbose){
       print("no set satisfies s.pred(S) >= c.pred")
@@ -258,21 +277,24 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
     opt.sets[[1]] <- Smax
   }
   
-  
+  # if mod.internal == mod.output holds, we have already fitted the models for the final 
+  # predictions.
   if(mod.internal == mod.output){
+    
+    # extract fitted models which are predictive enough
     opt.models <- m$models[which(vec.s.pred < c)]
     
+    # if no model is chosen by this, we use the one corresponding to the set Smax
     if(length(opt.models) == 0){
       opt.models[[1]] <- m$models[[Smax.ind]]
     }
   } else{
     
+    # in this case, we need to fit new models on opt.sets
     mm <- model.trainer(sets.train = opt.sets, sample = sample, mod = mod.output, usage = "test")
     opt.models <- mm$models
     
   }
-  
-  
   
   result <- list("inv.sets" = inv.sets, "opt.sets" = opt.sets, "opt.models" = opt.models, "mod.output" = mod.output)
   
@@ -284,22 +306,22 @@ stabilizedClassification <- function(sample, test, a.inv = 0.05, a.pred = 0.05, 
 
 
 
-# mod must be the same as mod.output for stabClassMod!!
 
-# used to make predictions for new data using a fitted stabilizedClassificaiton object 
+# used to make predictions for new data using a fitted stabilizedClassification object 
 # stabClassMod: fitted stabilizedClassificaiton object 
 # newsample: new data, same structure as sample used to fit stabClassMod (just needs the covariates)
 predict.stabClass <- function(stabClassMod, newsample){
   
+  # extract the fitted models and most predictive invariant subsets
   mod <- stabClassMod$mod.output
-  
   opt.models <- stabClassMod$opt.models
   opt.sets <- stabClassMod$opt.sets
   
+  # initialize vector for predicted probabilities
   preds <- matrix(0, nrow = nrow(newsample), ncol = length(opt.models))
   
+  # iterate over the most predictive invariant subsets
   for(m in 1:length(opt.models)){
-    
 
     # if the corresp. set of predictors is empty, opt.models[[...]] is just the mean of the response over the sample
     if(!is.numeric(opt.models[[m]])){
@@ -317,9 +339,13 @@ predict.stabClass <- function(stabClassMod, newsample){
     }
   }
   
+  # aggregate the predicted probabilities of the models in the ensemble
   pred.prob <- rowMeans(preds)
+  
+  # determine the predicted class with threshold t = 0.5
   pred.class <- ifelse(pred.prob > 0.5, 1, 0)
   
+  # return both results
   result.pred <- list("pred.probs" = pred.prob, "pred.class" = pred.class)
   
   return(result.pred)

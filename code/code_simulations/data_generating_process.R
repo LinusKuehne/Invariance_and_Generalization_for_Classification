@@ -431,12 +431,6 @@ generate.one.env <- function(env.name, d, n, num.int, dag.full, dag.cov, top.ord
 
   
   
-  
-  
-  
-  
-  
-  
   # sample the intervention values (differentiating between training (weak) and test (stronger))
   for(i in (d+2):ncol(df.env)){
     
@@ -626,16 +620,14 @@ generate.one.env <- function(env.name, d, n, num.int, dag.full, dag.cov, top.ord
     # we only want to resample the interventions at mot max.resamp times (then, we resample the weights)
     resamp.more <- num.resamp < max.resamp
     
-    
+    # see if degenerate in one of two ways
     sum.zero <- (sum(df.env$Y) <= n*0.05)
     sum.one <- (sum(df.env$Y) >= n*0.95)
     
+    # do we have to resample?
     resamp <- sum.zero || sum.one
     
-    
-    
     resamp <- resamp && resamp.more
-    
     
   }
   

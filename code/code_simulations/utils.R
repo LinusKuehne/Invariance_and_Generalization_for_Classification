@@ -6,7 +6,11 @@
 # min: non-negative
 # max: non-negative, satisfies max > min
 runifstrong <- function(n, min, max){
+  
+  # sample the absolute value
   abs.samples <- runif(n, min, max)
+  
+  # randomly sample the sign
   sign <- sample(c(-1,1), size = n, replace = T)
   
   return(sign*abs.samples)
@@ -37,12 +41,17 @@ BCE <- function(y, y.hat){
 # y.hat: probability in (0,1) (probability that Y=1 given some predictors)
 BCE.weighted <- function(y, y.hat){
 
-  ones <- mean(y) # proportion of 1's
-  zeros <- 1-ones # proportion of 0's
+  # proportion of 1's
+  ones <- mean(y) 
+  
+  # proportion of 0's
+  zeros <- 1-ones 
+  
+  # compute weights
   w1 <- 1/(2*ones)
   w0 <- 1/(2*zeros)
   
-  
+  # cap extreme values such that the log is defined
   y.hat.norm <- y.hat
   y.hat.norm[y.hat > 0.99999999999] <- 0.99999999999
   y.hat.norm[y.hat < 0.00000000001] <- 0.00000000001
@@ -121,21 +130,23 @@ FWE <- function(s.hat, parents){
 # s.hat: vector of variables (ICP output)
 # parents: vector of variables (parents of response)
 jaccard.ICP <- function(s.hat, parents){
-  j <- 1
   
+  # deal with the cases of empty sets
   if(length(s.hat) == 0){
-    
     if(length(parents) == 0){
       return(1)
     } else{
       return(0)
     }
-    
   }
   
+  # compute size of intersection 
   intersection <- length(intersect(s.hat, parents))
+  
+  # compute size of union
   union <- length(parents) + length(s.hat) - intersection
   
+  # return Jaccard index
   return(intersection/union)
 }
 
@@ -150,12 +161,17 @@ jaccard.standard <- function(pvalues, thresh = 0.05){
   # ground truth invariant sets
   gt <- c(2,5)
   
+  # predicted invariant subsets
   pred <- which(pvalues > thresh)
   
+  # compute size of the intersection
   intersection <- length(intersect(gt, pred))
-  union <- length(gt) + length(pred) - intersection
-  return(intersection/union)
   
+  # compute size of the union
+  union <- length(gt) + length(pred) - intersection
+  
+  # return Jaccard index
+  return(intersection/union)
 }
 
 
@@ -170,6 +186,7 @@ jaccard.standard <- function(pvalues, thresh = 0.05){
 # num.covariates are the number of covariates (how many X-variables we have)
 jaccard <- function(pvalues, thresh = 0.05, stable.sets, num.covariates){
 
+  # generate vector of variable names
   Xnames <- rep("A", num.covariates)
   for(w in 1:num.covariates){
     number <- as.character(w)
@@ -177,12 +194,16 @@ jaccard <- function(pvalues, thresh = 0.05, stable.sets, num.covariates){
     Xnames[w] <- name  
   }
   
+  # list of all subsets
   ps <- powerSet(Xnames)
+  
+  # get the indices for the stable sets
   gt <- (1:length(ps))[ps %in% stable.sets]
   
-  
+  # the predicted invariant subsets
   pred <- which(pvalues > thresh)
   
+  # compute the size of the intersection
   intersection <- length(intersect(gt, pred))
   
   # if A = B = empty, then J(A,B) := 1
@@ -194,7 +215,10 @@ jaccard <- function(pvalues, thresh = 0.05, stable.sets, num.covariates){
     return(0)
   }
   
+  # compute the size of the union 
   union <- length(gt) + length(pred) - intersection
+  
+  # return the Jaccard index
   return(intersection/union)
   
 }
@@ -270,7 +294,6 @@ stableBlanket <- function(dag.full, dag.cov, num.int, d){
   for(w in 1:num.int){
     number <- as.character(w)
     name <- paste("I", number, sep="")
-    
     int.vars <- append(int.vars, children(x=dag.full, v=name))
   }
   int.vars <- unique(int.vars)
@@ -354,7 +377,10 @@ int.stable.sets <- function(dag.full, d, num.int){
 # compute Markov blanket
 # dag.cov: dagitty dag object including all covariates and the response
 markovBlanket <- function(dag.cov){
+  
+  # compute the Markov blanket with dagitty, and order it according to our needs
   re <- mixedsort(dagitty::markovBlanket(x=dag.cov, v="Y"))
+  
   return(re)
 }
 
@@ -376,19 +402,25 @@ ICP.oracle <- function(dag.cov, dag.full, num.int){
   }
   
   
-  
+  # parents of Y
   pa.Y <- parents(x = dag.cov, v = "Y")
   
+  # children of E
   ch.E <- children(x = dag.full, v = int.names)
   
+  # ancestors of Y
   an.Y <- ancestors(x = dag.cov, v = "Y", proper = T)
   
+  # intersection of the ancestors of Y and the children of E
   an.ch <- intersect(an.Y, ch.E)
   
+  # get the parents of the nodes an.ch
   pa.an.ch <- parents(x = dag.cov, v = an.ch)
   
+  # compute the union of ch.E and pa.an.ch
   un <- union(ch.E, pa.an.ch)
   
+  # oracle ICP output
   s.ICP <- intersect(pa.Y, un)
   
   return(s.ICP)
