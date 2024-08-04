@@ -84,12 +84,21 @@ When running a script, make sure the working directory is set to the script's lo
 
 
 
+## Content of the pyroCb data in data/exported_pyrocb.rdata
 
 
+The file data/exported_pyrocb.rdata contains the following items:
 
-Explain data
+* `cube`: dataframe with 6919 rows and 318 columns. For each of 30 variables (the 28 variables from Table 6.1 plus two further variables which (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)) do not consider), there are 11 summary statistics computed over a 200 km x 200 km grid. Two variables are only associated with 6 and 4 numbers, respectively. Each row corresponds to one observation of all summary statistics of the variables.
+*  `envVars`: Contains the latitude, longitude, and date for all 6919 observations.
+*  `event_df`: dataframe with 6919 rows with further information corresponding to the observations. We use the column `event_df$wildfire_id`, which specifies from which wildfire a certain observation is collected. This is useful to run cross-validation on the pyroCb dataset. Since there are multiple observations collected from each wildfire at different points in time, the information in `event_df$wildfire_id` allows us to ensure that every observation from a certain wildfire is contained in the same cross-validation fold.
+*  `indxIncl`: Indices of the 28 variables among the 30 available variables (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)) include in their analysis. The indices are ordered according to the occurrence of the variables in the columns of `cube`.
+*  `labels`: factor of length 6919 with a value of 1 if the corresponding observation corresponds to pyroCb occurrence, and a value of 0 is no pyroCb is present.
+*  `posts`: Vector of the start indices of each group of summary statistics belonging to one variable. Note that we use the R language, where indexing starts at 1. For example, `posts[1] = 1`, `posts[2] = 12`, `posts[3] = 23`. This means that the 11 summary statistics belonging to the first variable ("ch1") correspond to the rows 1 up to and including 11 in "cube". The columns for the second variable are 12 up to and including 22. Except for two variables ("typeH" and "typeL"), there are 11 summary statistics for each variable. If one wants to extract the columns of "cube" corresponding to the variables `set <- c(2,3,4,5,9,30)`, for example, the following useful snippet returns the desired column indices:
 
+         ind.set <- as.vector(unlist(sapply(X = set, function(i) posts[i]:(posts[i+1]-1))))
 
+* `varss`: a vector of length 30 with the names of the corresponding variables. For example, the ith variable would have the name `varss[i]`, and corresponds to the columns `cube[, posts[i]:(posts[i+1]-1)]`.
 
 
 
