@@ -1,5 +1,5 @@
 # Invariance and Generalization for Classification
- This repo contains the code associated with the master's thesis "Invariance and Generalization for Classification" written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis was supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
+ This repo contains the code associated with the master's thesis "Invariance and Generalization for Classification" written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis wa#s supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
 
  ## Content of the repository
  This repo contains all code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here. 
@@ -25,3 +25,62 @@ When running a script, make sure the working directory is set to the script's lo
     * "sessionInfo" contains the output of the R command sessionInfo() run at the end of each script. The text files have the same name as the corresponding script (with the .txt ending instead of .R).
     * The rest of the files in this folder are R scripts for the experiments on synthetic data.
  
+
+
+## Code used across different experiments
+
+| Method | Script location/name |
+| --- | --- |
+| Utilities (loss functions, DAG functions, etc.) | code/code_simulations/utils.R |
+| Invariance tests from Chapter 3 | code/code_simulations/invariance_tests.R |
+| Stabilized classification from Subsection 4.4.3 | code/code_simulations/stabilized_classification.R |
+| Data generating process (Section 5.1 and Subsection B.3.1) | code/code_simulations/data_generating_process.R |
+| Invariance tests for pyroCb data | code/code_pyroCb/pyroCb_invariance_tests.R |
+| Utilities for stabilized classification on pyroCb data | code/code_pyroCb/pyroCb_stabilized_classification_utils.R |
+|  |  |
+|  |  |
+
+## Data
+
+| Kind of data | Data location/name |
+| --- | --- |
+| Stored data for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_data |
+| Stored sessionInfo files for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/sessionInfo |
+| Generated plots for simulation experiments for the experiments in Chapter 5, and Sections B.3 and B.4 | simulations/saved_plots |
+| PyroCb data provided by authors of (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)) | data/pyroCb_data_python |
+| Exported pyroCb data into .rdata format with script experiments_pyroCb/data_preparation/transform_data.R | data/exported_pyrocb.rdata |
+| Stored data for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/saved_data |
+| Stored sessionInfo files for the experiments in Chapter 6 and Subsection B.4.3 | experiments_pyroCb/sessionInfo |
+| Generated plots from Chapter 6 | experiments_pyroCb/saved_plots |
+
+## Specific experiments
+
+| Object in thesis | Script location/name |
+| --- | --- |
+| Invariance tests from Chapter 3 | code/code_simulations/invariance_tests.R |
+| Table 4.1 | simulations/example_predicting_on_inv_sets.R |
+| Stabilized classification from Subsection 4.4.3 | code/code_simulations/stabilized_classification.R |
+| Data generating process (Section 5.1) | code/code_simulations/data_generating_process.R |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+
+
+
+Explain data
+
+
+
+
+
+
+
+
+
