@@ -1,5 +1,5 @@
 # Invariance and Generalization for Classification
- This repo contains the code associated with the master's thesis "Invariance and Generalization for Classification" written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis wa#s supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
+ This repo contains the code associated with the master's thesis "Invariance and Generalization for Classification" written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis was supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
 
  ## Content of the repository
  This repo contains all code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here. 
@@ -37,8 +37,7 @@ When running a script, make sure the working directory is set to the script's lo
 | Data generating process (Section 5.1 and Subsection B.3.1) | code/code_simulations/data_generating_process.R |
 | Invariance tests for pyroCb data | code/code_pyroCb/pyroCb_invariance_tests.R |
 | Utilities for stabilized classification on pyroCb data | code/code_pyroCb/pyroCb_stabilized_classification_utils.R |
-|  |  |
-|  |  |
+
 
 ## Data
 
@@ -79,9 +78,6 @@ When running a script, make sure the working directory is set to the script's lo
 | Fig. B.8 | simulations/visualization_standard_SCM.R |
 | Table B.1 | experiments_pyroCb/pyroCb_stabilized_classification/pyroCb_small_invariant_subsets.R |
 | Fig. B.9 | simulations/similarity_tests.R |
-|  |  |
-|  |  |
-|  |  |
 
 
 
