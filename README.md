@@ -57,20 +57,33 @@ When running a script, make sure the working directory is set to the script's lo
 
 | Object in thesis | Script location/name |
 | --- | --- |
-| Invariance tests from Chapter 3 | code/code_simulations/invariance_tests.R |
 | Table 4.1 | simulations/example_predicting_on_inv_sets.R |
-| Stabilized classification from Subsection 4.4.3 | code/code_simulations/stabilized_classification.R |
-| Data generating process (Section 5.1) | code/code_simulations/data_generating_process.R |
+| Fig. 5.3 | simulations/ecdf_standard.R |
+| Fig. 5.4 | simulations/level_power_standard.R |
+| Fig. 5.5 | simulations/power_standard.R |
+| Fig. 5.6 and 5.7 | simulations/ICP_level_power_standard.R |
+| Fig. 5.8 and 5.9 | simulations/stable_stabclass_standard.R |
+| Fig. 6.3 and 6.4 | experiments_pyroCb/data_preparation/create_environments.R |
+| Table 6.2 | experiments_pyroCb/data_preparation/variable_screening.R |
+| Table 6.3 | scripts in folder experiments_pyroCb/pyroCb_ICP |
+| Section 6.3 | scripts in folder experiments_pyroCb/pyroCb_ICP |
+| Table 6.4 | scripts in folder experiments_pyroCb/pyroCb_stabilized_classification |
+| Subsection 6.4.2 | experiments_pyroCb/pyroCb_stabilized_classification/pyroCb_stabilized_classification_oracle.R |
+| Fig. 6.5 | experiments_pyroCb/pyroCb_stabilized_classification/pyroCb_similarity_tests.R |
+| Fig. B.2 | simulations/ecdf_randomSCM.R |
+| Fig. B.3 | simulations/level_power_random.R |
+| Fig. B.4 | simulations/power_random.R |
+| Fig. B.5 | simulations/ICP_level_power_bytarget.R |
+| Fig. B.6 | simulations/stable_stabclass_random.R |
+| Fig. B.7 | simulations/delong_not_level.R |
+| Fig. B.8 | simulations/visualization_standard_SCM.R |
+| Table B.1 | experiments_pyroCb/pyroCb_stabilized_classification/pyroCb_small_invariant_subsets.R |
+| Fig. B.9 | simulations/similarity_tests.R |
 |  |  |
 |  |  |
 |  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+
+
 
 
 
