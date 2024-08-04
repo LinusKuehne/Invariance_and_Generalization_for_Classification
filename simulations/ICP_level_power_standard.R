@@ -189,7 +189,7 @@ p.FWER.int <- ggplot(df.plot.FWER.int, aes(intervention.strength, value)) +
   geom_line(aes(colour = Candidate)) +
   geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   geom_hline(yintercept = 0.05, linetype = "dotted", color = "black", linewidth = 0.75) +
-  xlab("Intervention strength") +
+  xlab("Intervention strength scaling") +
   ylab("FWER") +
   ggtitle("Family-Wise Error Rate") +
   theme_bw(base_size = size)
@@ -202,7 +202,7 @@ p.jaccard.int <- ggplot(df.plot.jaccard.int, aes(intervention.strength, value)) 
   scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
   geom_line(aes(colour = Candidate)) +
   geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
-  xlab("Intervention strength") +
+  xlab("Intervention strength scaling") +
   ylab("Average Jaccard index") +
   coord_cartesian(ylim = c(0, 1)) +
   ggtitle("Jaccard Index") +

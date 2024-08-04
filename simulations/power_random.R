@@ -215,7 +215,7 @@ p.jaccard.int <- ggplot(df.plot.jaccard.int, aes(intervention.strength, value)) 
   geom_line(aes(colour = Candidate)) +
   #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
   coord_cartesian(ylim=c(0.2,1)) +
-  xlab("Intervention strength") +
+  xlab("Intervention strength scaling") +
   ylab("Average Jaccard index") +
   ggtitle("Fixed Sample Size") +
   theme_bw(base_size = size) 
@@ -387,40 +387,7 @@ alpha <- 0.3
 # For the total sample size: multiply by 5
 df.plot.jaccard.samp$sample.size <- 5*df.plot.jaccard.samp$sample.size
 
-
-p.jaccard.samp <- ggplot(df.plot.jaccard.samp, aes(sample.size, value)) +
-  scale_color_hue(labels=c('DeLong (RF)', 'DeLong (GLM)', 'TRAM-GCM (RF)', 'TRAM-GCM (GLM)', 'Correlation', 'Residual')) +
-  geom_line(aes(colour = Candidate)) +
-  #geom_ribbon(aes(ymin = value - ci, ymax = value + ci, fill = Candidate), alpha = alpha, show.legend = F) +
-  coord_cartesian(ylim=c(0.3,1)) +
-  xlab("Sample size") +
-  ylab("Average Jaccard index") +
-  ggtitle("Fixed Intervention Strength") +
-  theme_bw(base_size = size)
-
-#p.jaccard.samp
-
-
-#-------------------------------------------------------------------------------
-
-
-
-
-
-
-
-#-------------------------------------------------------------------------------
-# combine the plots from both experiments 
-#-------------------------------------------------------------------------------
-
-combined <- p.jaccard.int + p.jaccard.samp & theme(legend.position = "bottom", legend.title=element_blank(), legend.text = element_text(size=size))
-
-combined + plot_layout(guides = "collect")
-
-ggsave(filename = file.path(script_dir, "saved_plots/power_random.pdf"), width = 6, height = 4)
-
-#-------------------------------------------------------------------------------
-
+ 
 
 
 
