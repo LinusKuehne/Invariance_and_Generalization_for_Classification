@@ -203,14 +203,14 @@ plt <- ggplot(data, aes(X, Y, fill= Z)) +
   geom_tile() +
   scale_fill_gradient(low="white", high="blue", na.value = "black")  +
   theme(axis.title.x = element_blank(), axis.title.y = element_blank()) +
-  labs(title = "Consistency between different rankings", fill = "Kendall's Tau") +
+  labs(title = "Consistency Between Different Rankings", fill = "Kendall's Tau") +
   theme_bw(base_size = size) +
   theme(axis.title.x = element_blank(), 
         axis.title.y = element_blank(),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
         axis.ticks = element_blank())
 
-plt
+#plt
 
 
 

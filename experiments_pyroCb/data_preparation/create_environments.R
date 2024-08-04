@@ -176,7 +176,7 @@ p_am <- ggmap(am_map) +
   xlab(expression(paste("Longitude (", degree,"E)"))) +
   ylab(expression(paste("Latitude (", degree,"N)"))) +
   labs(title = "Wildfires in North America", color = "Environment and biome")+
-  theme(legend.background = element_blank(), legend.key = element_blank())+
+  theme(legend.background = element_blank(), legend.key = element_blank(), legend.text = element_text(size = 10))+
   guides(color = guide_legend(ncol = 3))
 
 #p_am
@@ -192,7 +192,7 @@ p_aus <- ggmap(aus_map) +
   xlab(expression(paste("Longitude (", degree,"E)"))) +
   ylab(expression(paste("Latitude (", degree,"N)"))) +
   labs(title = "Wildfires in Australia", color = "Environment and biome") +
-  theme(legend.background = element_blank(), legend.key = element_blank()) +
+  theme(legend.background = element_blank(), legend.key = element_blank(), legend.text = element_text(size = 10)) +
   guides(color = guide_legend(ncol = 3))
 
 #p_aus
@@ -299,7 +299,7 @@ p_am <- ggmap(am_map) +
   xlab(expression(paste("Longitude (", degree,"E)"))) +
   ylab(expression(paste("Latitude (", degree,"N)"))) +
   labs(title = "Wildfires in North America", color = "Environment and biome")+
-  theme(legend.background = element_blank(), legend.key = element_blank())+
+  theme(legend.background = element_blank(), legend.key = element_blank(), legend.text = element_text(size = 10))+
   guides(color = guide_legend(ncol = 3))
 
 #p_am
@@ -315,7 +315,7 @@ p_aus <- ggmap(aus_map) +
   xlab(expression(paste("Longitude (", degree,"E)"))) +
   ylab(expression(paste("Latitude (", degree,"N)"))) +
   labs(title = "Wildfires in Australia", color = "Environment and biome") +
-  theme(legend.background = element_blank(), legend.key = element_blank())+
+  theme(legend.background = element_blank(), legend.key = element_blank(), legend.text = element_text(size = 10))+
   guides(color = guide_legend(ncol = 3))
 #p_aus
 

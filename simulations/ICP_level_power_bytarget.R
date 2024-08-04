@@ -203,7 +203,7 @@ p.delongRF <- ggplot(points.mod1.delongRF, aes(x = x, y = y, color = group, shap
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "DeLong (RF)"
   ) +
   theme(
@@ -251,7 +251,7 @@ p.delongGLM <- ggplot(points.mod1.delongGLM, aes(x = x, y = y, color = group, sh
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "DeLong (GLM)"
   ) +
   theme(
@@ -299,7 +299,7 @@ p.tramRF <- ggplot(points.mod1.tramRF, aes(x = x, y = y, color = group, shape = 
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "TRAM-GCM (RF)"
   ) +
   theme(
@@ -346,7 +346,7 @@ p.tramGLM <- ggplot(points.mod1.tramGLM, aes(x = x, y = y, color = group, shape 
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "TRAM-GCM (GLM)"
   ) +
   theme(
@@ -356,7 +356,7 @@ p.tramGLM <- ggplot(points.mod1.tramGLM, aes(x = x, y = y, color = group, shape 
   ) +
   coord_cartesian(ylim = c(0, 1))
 
-p.tramGLM
+#p.tramGLM
 
 
 
@@ -393,7 +393,7 @@ p.corr <- ggplot(points.mod1.corr, aes(x = x, y = y, color = group, shape = grou
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "Correlation"
   ) +
   theme(
@@ -441,7 +441,7 @@ p.residual <- ggplot(points.mod1.res, aes(x = x, y = y, color = group, shape = g
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "Residual"
   ) +
   theme(
@@ -487,7 +487,7 @@ p.oracle <- ggplot(points.mod1.oracle, aes(x = x, y = y, color = group, shape = 
     color = "Group",
     shape = "Group",
     x = "FWER",
-    y = "Jaccard index",
+    y = "Average Jaccard index",
     title = "Oracle"
   ) +
   theme(
