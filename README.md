@@ -8,6 +8,8 @@ When running a script, make sure the working directory is set to the script's lo
 First, we provide tables explicitly stating which experiment in the thesis corresponds to which script in this repository. The references correspond to the thesis uploaded in this repository. Then, we explain the folder structure of the repository. This contains essentially the same information as the previous tables, but organized in a different format. Finally, we explain the contents of the pyroCb data stored in the file data/exported_pyrocb.rdata. 
 
 
+
+
 ## Explanation of the content of this repository with respect to the thesis
 
 ### Code used across different experiments
