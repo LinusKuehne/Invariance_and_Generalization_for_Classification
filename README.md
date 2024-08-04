@@ -1,11 +1,12 @@
 # Invariance and Generalization for Classification
  This repository contains the code associated with the master's thesis *"Invariance and Generalization for Classification"* written by Linus Kühne at the Seminar for Statistics, Department of Mathematics, ETH Zurich, in 2024. The thesis was supervised by Prof. Jonas Peters and co-supervised by Sorawit (James) Saengkyongam. 
 
-This repository contains all R code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here.  
+This repository contains all R code used to create parts of the thesis. It also contains pre-processed data from the pyrocast database presented in (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)). The preprocessing is explained in the thesis and in (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)). I have explicit permission by Kenza Tazi to publish these files here. We also refer to the [pyrocast](https://github.com/spaceml-org/pyrocast) GitHub repository connected to the papers (Tazi et al., [2022](https://arxiv.org/abs/2211.13052v1)) and (Salas-Porras et al., [2022](https://arxiv.org/abs/2211.08883v3)).
 
 When running a script, make sure the working directory is set to the script's location within the folder structure of this repository. For every script we run, the output of the `sessionInfo()` command of R is saved with the name of the script (and a .txt ending). These files contain information about the loaded packages, their versions, the operating system, etc. We explain the location of these files below. 
 
 First, we provide tables explicitly stating which experiment in the thesis corresponds to which script in this repository. The references correspond to the thesis uploaded in this repository. Then, we explain the folder structure of the repository. This contains essentially the same information as the previous tables, but organized in a different format. Finally, we explain the contents of the pyroCb data stored in the file data/exported_pyrocb.rdata. 
+
 
 ## Explanation of the content of this repository with respect to the thesis
 
