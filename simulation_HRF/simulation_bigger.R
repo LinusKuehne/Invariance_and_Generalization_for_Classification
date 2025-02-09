@@ -4,27 +4,37 @@ library(viridis)
 
 
 # load in the functions needed
-source("invariance_tests.R")
-source("utils.R")
-source("data_generating_process.R")
-source("hrf.R")
-source("stabilized_classification.R")
+source("simulation_HRF/invariance_tests.R")
+source("simulation_HRF/utils.R")
+source("simulation_HRF/data_generating_process.R")
+source("simulation_HRF/hrf.R")
+source("simulation_HRF/stabilized_classification.R")
 
 
 #-------------------------------------------------------------------------------
 # Parameters for the simulation
 #-------------------------------------------------------------------------------
 
-# sets to check stability
-sets <- powerSet(1:7)
-sets[[1]] <- c(0)
-
 # number of samples per domain (training: n, testing: n.test)
 n.test <- 500
 n <- 500
 
+# find number of predictors
+sample <- gen.sample.bigger(n.train = n, n.test = n.test)$sample_train
+d <- length(grep("^X", names(sample)))
+env.col.idx <- which(names(sample) == "Env")
+
+# stable blanket
+stable.blanket <- c(1,2,3,5)
+
+# sets to check stability
+sets <- powerSet(1:d)
+sets[[1]] <- c(0)
+
+
+
 # number of simulation runs 
-n.sim <- 150
+n.sim <- 50
 
 # number of bootstrap samples to compute c.pred
 B <- 50
@@ -62,43 +72,43 @@ for(sim in 1:n.sim){
   
   # stabilized classification
   sc.fit <- stabilizedClassification(sample = sample, test = inv_test, B = B, verbose = F)
-  pred.sc <- predict.stabClass(sc.fit, newsample = sample_test[,1:7])
+  pred.sc <- predict.stabClass(sc.fit, newsample = sample_test[,1:d])
   accuracies$sc[sim] <- mean(sample_test$Y == pred.sc$pred.class)
 
   # stabilized classification with HRF classifier
-  pred.sc.hrf <- predict.stabClass.hrf(sc.fit, newsample = sample_test[,1:7])
+  pred.sc.hrf <- predict.stabClass.hrf(sc.fit, newsample = sample_test[,1:d])
   accuracies$sc.hrf[sim] <- mean(sample_test$Y == pred.sc.hrf$pred.class)
   
   # oracle RF fitted on the stable blanket
-  sb.fit <- ranger(y = as.factor(sample$Y), x = sample[, c(1,2,3,5)], probability = T, num.threads = 0)
-  pred.sb <- predict(sb.fit, data = sample_test[, c(1,2,3,5)])$predictions[,"1"]
+  sb.fit <- ranger(y = as.factor(sample$Y), x = sample[, stable.blanket], probability = T, num.threads = 0)
+  pred.sb <- predict(sb.fit, data = sample_test[, stable.blanket])$predictions[,"1"]
   accuracies$sb[sim] <- mean(sample_test$Y == ifelse(pred.sb>0.5, 1, 0))
 
   # standard random forest
-  rf.fit <- ranger(y = as.factor(sample$Y), x = sample[, 1:7], probability = T, num.threads = 0)
-  pred.rf <- predict(rf.fit, data = sample_test[,1:7])$predictions[,"1"]
+  rf.fit <- ranger(y = as.factor(sample$Y), x = sample[, 1:d], probability = T, num.threads = 0)
+  pred.rf <- predict(rf.fit, data = sample_test[,1:d])$predictions[,"1"]
   accuracies$rf[sim] <- mean(sample_test$Y == ifelse(pred.rf>0.5, 1, 0))
 
   first.splits.rf <- sapply(rf.fit$forest$split.varIDs, function(x) x[1])
-  sb.first.split$rf[sim] <- mean(first.splits.rf %in% c(0,1,2,4))
+  sb.first.split$rf[sim] <- mean(first.splits.rf %in% (stable.blanket-1))
 
   # original hedged RF
-  hrf.orig.fit <- hrf.orig(y = as.factor(sample$Y), x = sample[, 1:7], rf.fit = rf.fit)
-  pred.hrf.orig <- predict.hedgedrf(hrf.orig.fit, data = sample_test[,1:7])
+  hrf.orig.fit <- hrf.orig(y = as.factor(sample$Y), x = sample[, 1:d], rf.fit = rf.fit)
+  pred.hrf.orig <- predict.hedgedrf(hrf.orig.fit, data = sample_test[,1:d])
   accuracies$hrf.orig[sim] <- mean(sample_test$Y == ifelse(pred.hrf.orig>0.5, 1, 0))
 
   hrf.orig.splitIDs <- hrf.orig.fit$rf.fit$forest$split.varIDs
   first.splits.hrf.orig <- sapply(hrf.orig.splitIDs, function(x) x[1])
-  sb.first.split$hrf.orig[sim] <- sum(hrf.orig.fit$tree.weights * (first.splits.hrf.orig %in% c(0,1,2,4)))
+  sb.first.split$hrf.orig[sim] <- sum(hrf.orig.fit$tree.weights * (first.splits.hrf.orig %in% (stable.blanket-1)))
 
   # ood hedged RF
-  hrf.ood.fit <- hrf.ood(y = as.factor(sample$Y), x = sample[, c(1,2,3,4,5,6,7,9)])
-  pred.hrf.ood <- predict.hedgedrf(hrf.ood.fit, data = sample_test[,1:7])
+  hrf.ood.fit <- hrf.ood(y = as.factor(sample$Y), x = sample[, c(1:d,env.col.idx)])
+  pred.hrf.ood <- predict.hedgedrf(hrf.ood.fit, data = sample_test[,1:d])
   accuracies$hrf.ood[sim] <- mean(sample_test$Y == ifelse(pred.hrf.ood>0.5, 1, 0))
 
   hrf.ood.splitIDs <- hrf.ood.fit$rf.fit$forest$split.varIDs
   first.splits.hrf.ood <- sapply(hrf.ood.splitIDs, function(x) x[1])
-  sb.first.split$hrf.ood[sim] <- t(hrf.ood.fit$tree.weights) %*% as.matrix(as.numeric(first.splits.hrf.ood %in% c(0,1,2,4)), ncol = 1)
+  sb.first.split$hrf.ood[sim] <- t(hrf.ood.fit$tree.weights) %*% as.matrix(as.numeric(first.splits.hrf.ood %in% (stable.blanket-1)), ncol = 1)
 }
 
 
@@ -137,13 +147,12 @@ plt.acc <- ggplot(data.acc, aes(x=name, y=value, fill=name)) +
   theme(legend.position="none") 
 plt.acc
 
-ggsave(filename = "hrf_sc_acc.pdf", width = 7.5, height = 7.5)
+ggsave(filename = "simulation_HRF/hrf_sc_acc.pdf", width = 7.5, height = 7.5)
 
 
 sb.ratio <- colMeans(sb.first.split)
 
-save(sb.ratio, file = "sb_ratio.rdata")
-load("sb_ratio.rdata")
+save(sb.ratio, file = "simulation_HRF/sb_ratio.rdata")
 
 
 

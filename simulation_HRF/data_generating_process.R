@@ -143,11 +143,15 @@ sim.env.bigger <- function(n, d.1, d.2, env.name){
   X7 <- rnorm(n, sd = sd)
   X4 <- Y - 0.5*X3 + X7 + a.2*d.2 + rnorm(n, sd = sd/2)
   
-  X6 <- Y -X4 + rnorm(n, sd = sd)
+  X6 <- Y - X4 + rnorm(n, sd = sd)
+  
+  X8 <- rnorm(n, sd = sd)
+  X9 <- rnorm(n, sd = sd)
+  X10 <- rnorm(n, sd = sd)
   
   Env <- as.factor(rep(env.name, n))
   
-  sample <- data.frame(X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5, X6 = X6, X7 = X7, Y = Y, Env = Env)
+  sample <- data.frame(X1 = X1, X2 = X2, X3 = X3, X4 = X4, X5 = X5, X6 = X6, X7 = X7, X8 = X8, X9 = X9, X10 = X10, Y = Y, Env = Env)
   
   return(sample)
 }

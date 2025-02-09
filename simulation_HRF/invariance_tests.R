@@ -540,6 +540,10 @@ pvalues.residual <- function(sample){
   # iterate over all subsets of predictors
   for(s in 1:length(sets)){
     
+    if(s %% 100 == 0){
+      print(paste0("Computing p-value for set ", s, " out of ", length(sets)))
+    }
+    
     # extract current set
     set <- sets[[s]]
 

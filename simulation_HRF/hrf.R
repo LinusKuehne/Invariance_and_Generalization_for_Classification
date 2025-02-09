@@ -101,12 +101,12 @@ hrf.ood <- function(x, y, num.iter = NULL, kappa = 1) {
   idx.trees <- which(x$Env %in% build.trees.envs)
   idx.weights <- which(!(x$Env %in% build.trees.envs))
   
-  rf.fit <- ranger::ranger(x = x[idx.trees, 1:7], y = y[idx.trees], probability = TRUE, num.threads = 0)
+  rf.fit <- ranger::ranger(x = x[idx.trees, 1:d], y = y[idx.trees], probability = TRUE, num.threads = 0)
   
   # Random forest predictions on all trees
   rf.predictions.all <- predict(
     rf.fit,
-    x[idx.weights, 1:7],
+    x[idx.weights, 1:d],
     predict.all = TRUE
   )$predictions[,"1",]
   
