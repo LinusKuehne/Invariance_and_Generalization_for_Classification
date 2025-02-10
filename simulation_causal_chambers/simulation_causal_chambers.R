@@ -86,10 +86,6 @@ for(e in 1:n.env){
   rf.fit <- ranger(y = as.factor(df.train$Y), x = df.train[, 1:d], probability = T, num.threads = 0, num.trees = 1000)
   pred.rf <- predict(rf.fit, data = df.test[,1:d])$predictions[,"1"]
   
-  mean(df.test$Y == ifelse(pred.rf>0.5, 1, 0))
-  weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.rf>0.5, 1, 0))
-  BCE.weighted(y = df.test$Y, y.hat = pred.rf)
-  
   accuracies$rf[e] <- mean(df.test$Y == ifelse(pred.rf>0.5, 1, 0))
   waccuracies$rf[e] <- weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.rf>0.5, 1, 0))
   wBCEscores$rf[e] <- BCE.weighted(y = df.test$Y, y.hat = pred.rf)
@@ -101,10 +97,6 @@ for(e in 1:n.env){
   
   oracle.fit <- ranger(y = as.factor(df.train$Y), x = df.train[, c(1,2,3,5,6,7,8)], probability = T, num.threads = 0, num.trees = 1000)
   pred.oracle <- predict(oracle.fit, data = df.test[, c(1,2,3,5,6,7,8)])$predictions[,"1"]
-
-  mean(df.test$Y == ifelse(pred.oracle>0.5, 1, 0))
-  weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.oracle>0.5, 1, 0))
-  BCE.weighted(y = df.test$Y, y.hat = pred.oracle)
   
   accuracies$oracle[e] <- mean(df.test$Y == ifelse(pred.oracle>0.5, 1, 0))
   waccuracies$oracle[e] <- weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.oracle>0.5, 1, 0))
@@ -118,10 +110,6 @@ for(e in 1:n.env){
   hrf.orig.fit <- hrf.orig(y = as.factor(df.train$Y), x = df.train[, 1:d], rf.fit = rf.fit)
   pred.hrf.orig <- predict.hedgedrf(hrf.orig.fit, data = df.test[,1:d])
   
-  mean(df.test$Y == ifelse(pred.hrf.orig>0.5, 1, 0))
-  weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.hrf.orig>0.5, 1, 0))
-  BCE.weighted(y = df.test$Y, y.hat = pred.hrf.orig)
-  
   accuracies$hrf.orig[e] <- mean(df.test$Y == ifelse(pred.hrf.orig>0.5, 1, 0))
   waccuracies$hrf.orig[e] <- weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.hrf.orig>0.5, 1, 0))
   wBCEscores$hrf.orig[e] <- BCE.weighted(y = df.test$Y, y.hat = pred.hrf.orig)
@@ -133,10 +121,6 @@ for(e in 1:n.env){
   
   hrf.ood.fit <- hrf.ood(y = as.factor(df.train$Y), x = df.train[, c(1:d,env.col.idx)])
   pred.hrf.ood <- predict.hedgedrf(hrf.ood.fit, data = df.test[,1:d])
-  
-  mean(df.test$Y == ifelse(pred.hrf.ood>0.5, 1, 0))
-  weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.hrf.ood>0.5, 1, 0))
-  BCE.weighted(y = df.test$Y, y.hat = pred.hrf.ood)
   
   accuracies$hrf.ood[e] <- mean(df.test$Y == ifelse(pred.hrf.ood>0.5, 1, 0))
   waccuracies$hrf.ood[e] <- weighted_accuracy(labels = df.test$Y, predictions = ifelse(pred.hrf.ood>0.5, 1, 0))
@@ -150,10 +134,6 @@ for(e in 1:n.env){
   sc.fit <- stabilizedClassification(sample = df.train, test = inv_test, B = B, verbose = F)
   pred.sc <- predict.stabClass(sc.fit, newsample = df.test[,1:d])
 
-  mean(df.test$Y == pred.sc$pred.class)
-  weighted_accuracy(labels = df.test$Y, predictions = pred.sc$pred.class)
-  BCE.weighted(y = df.test$Y, y.hat = pred.sc$pred.probs)
-
   accuracies$sc[e] <- mean(df.test$Y == pred.sc$pred.class)
   waccuracies$sc[e] <- weighted_accuracy(labels = df.test$Y, predictions = pred.sc$pred.class)
   wBCEscores$sc[e] <- BCE.weighted(y = df.test$Y, y.hat = pred.sc$pred.probs)
@@ -164,10 +144,6 @@ for(e in 1:n.env){
   # ----------------------------------------------
 
   pred.sc.hrf <- predict.stabClass.hrf(sc.fit, newsample = df.test[,1:d])
-
-  mean(df.test$Y == pred.sc.hrf$pred.class)
-  weighted_accuracy(labels = df.test$Y, predictions = pred.sc.hrf$pred.class)
-  BCE.weighted(y = df.test$Y, y.hat = pred.sc.hrf$pred.probs)
 
   accuracies$sc.hrf[e] <- mean(df.test$Y == pred.sc.hrf$pred.class)
   waccuracies$sc.hrf[e] <- weighted_accuracy(labels = df.test$Y, predictions = pred.sc.hrf$pred.class)
