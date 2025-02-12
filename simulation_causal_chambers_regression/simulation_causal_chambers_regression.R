@@ -69,7 +69,11 @@ for(e in 1:n.env){
   i.train = which(df$Env != levels(df$Env)[e])
   
   df.test = df[i.test,]
+  df.test$Env = droplevels(df.test$Env)
+  
   df.train = df[i.train,]
+  df.train$Env = droplevels(df.train$Env)
+
 
   
   # ----------------------------------------------
